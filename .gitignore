@@ -1,0 +1,19 @@
+# clasp / Apps Script
+.clasp.json.local
+.clasprc.json
+*.local
+
+# Node (if tooling is added later)
+node_modules/
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets — never commit API keys or bound-project credentials
+*.key
+secrets/
+credentials.json

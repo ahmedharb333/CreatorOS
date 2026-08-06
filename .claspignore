@@ -1,0 +1,11 @@
+# Only push Apps Script source, tests, and the manifest.
+**/**
+!appsscript.json
+!src/**/*.js
+!tests/**/*.js
+
+# Never push docs, registers, release notes, or sample data to Apps Script.
+docs/**
+release/**
+sample-data/**
+*.md

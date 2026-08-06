@@ -1,0 +1,38 @@
+{
+  "_comment": "CreatorOS sample workspace (docs 21 §2). Reference dataset using valid enum values. IDs shown are illustrative; the real IdService assigns them on write. A one-click loader is proposed in RECOMMENDATIONS R-05 (awaiting approval).",
+  "setup": {
+    "CREATOR_NAME": "Sample Creator",
+    "BRAND_NAME": "Sample Studio",
+    "TIMEZONE": "Etc/GMT",
+    "PRIMARY_GOAL": "Authority",
+    "PRIMARY_PLATFORM": "YouTube",
+    "SECONDARY_PLATFORMS": "LinkedIn, Newsletter",
+    "WEEKLY_AVAILABLE_HOURS": 10,
+    "WORK_DAYS": "Mon, Tue, Wed, Thu, Fri",
+    "CONTENT_PILLARS": "Education, Story, Authority",
+    "ONBOARDING_STATUS": "Complete"
+  },
+  "ideas": [
+    { "Idea_Title": "Why governance fails at scale", "Content_Pillar": "Authority", "Primary_Platform": "YouTube", "Suggested_Format": "YouTube Long-Form", "Strategic_Goal": "Authority", "Effort_Score": 4, "Impact_Score": 5, "Confidence_Score": 4, "Status": "Approved", "Source": "Research" },
+    { "Idea_Title": "3 board-meeting mistakes", "Content_Pillar": "Education", "Primary_Platform": "LinkedIn", "Suggested_Format": "LinkedIn Post", "Strategic_Goal": "Engagement", "Effort_Score": 2, "Impact_Score": 3, "Confidence_Score": 4, "Status": "Reviewed", "Source": "Manual" },
+    { "Idea_Title": "Weekly governance digest", "Content_Pillar": "Story", "Primary_Platform": "Newsletter", "Suggested_Format": "Newsletter", "Strategic_Goal": "Retention", "Effort_Score": 3, "Impact_Score": 4, "Confidence_Score": 3, "Status": "Captured", "Source": "Audience" }
+  ],
+  "content": [
+    { "Content_ID": "CNT-000001", "Idea_ID": "IDE-000001", "Title": "Why governance fails at scale", "Content_Pillar": "Authority", "Primary_Platform": "YouTube", "Format": "YouTube Long-Form", "Objective": "Awareness", "Priority": "High", "Status": "In Production", "Planned_Publish_Date": "2026-08-20" },
+    { "Content_ID": "CNT-000002", "Idea_ID": "IDE-000002", "Title": "3 board-meeting mistakes", "Content_Pillar": "Education", "Primary_Platform": "LinkedIn", "Format": "LinkedIn Post", "Objective": "Engagement", "Priority": "Medium", "Status": "Published", "Planned_Publish_Date": "2026-08-01", "Actual_Publish_Date": "2026-08-01", "Published_URL": "https://example.com/post" }
+  ],
+  "tasks": [
+    { "Content_ID": "CNT-000001", "Task_Name": "Draft script", "Task_Type": "Writing", "Sequence": 4, "Priority": "High", "Status": "In Progress", "Estimated_Minutes": 180, "Due_Date": "2026-08-13", "Calendar_Sync_Status": "Not Synced", "Recovery_Status": "Not Required" },
+    { "Content_ID": "CNT-000001", "Task_Name": "Edit first cut", "Task_Type": "Editing", "Sequence": 7, "Priority": "High", "Status": "Not Started", "Estimated_Minutes": 240, "Due_Date": "2026-08-10", "Calendar_Sync_Status": "Not Synced", "Recovery_Status": "Required", "_note": "overdue relative to 2026-08-06" },
+    { "Content_ID": "CNT-000001", "Task_Name": "Create thumbnail", "Task_Type": "Design", "Sequence": 8, "Priority": "Medium", "Status": "Blocked", "Estimated_Minutes": 90, "Due_Date": "2026-08-17", "Blocked_Reason": "Waiting on final title", "Calendar_Sync_Status": "Not Synced", "Recovery_Status": "Not Required" }
+  ],
+  "weekly_plan": [
+    { "Week_ID": "WEK-000001", "Week_Start": "2026-08-03", "Week_End": "2026-08-09", "Available_Minutes": 600, "Planned_Minutes": 690, "Utilization_Percent": 1.15, "Status": "Draft", "Warning_Level": "Overloaded" }
+  ],
+  "repurposing": [
+    { "Repurpose_ID": "RPS-000001", "Source_Content_ID": "CNT-000001", "Target_Platform": "LinkedIn", "Target_Format": "LinkedIn Carousel", "Suggested_Angle": "Top 5 governance failure modes as a carousel", "Status": "Suggested", "AI_Generated": false }
+  ],
+  "performance": [
+    { "Content_ID": "CNT-000002", "Platform": "LinkedIn", "Measurement_Date": "2026-08-04", "Impressions": 4200, "Likes": 130, "Comments": 18, "Shares": 9, "Clicks": 75, "Leads": 3 }
+  ]
+}
