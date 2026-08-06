@@ -1,8 +1,11 @@
-# Only push Apps Script source, tests, and the manifest.
+# Only push Apps Script source, GAS test suites, and the manifest.
 **/**
 !appsscript.json
 !src/**/*.js
 !tests/**/*.js
+
+# Node-only test harness (require/fs/vm) must NOT be pushed to Apps Script.
+tests/node/**
 
 # Never push docs, registers, release notes, or sample data to Apps Script.
 docs/**

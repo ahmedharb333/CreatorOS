@@ -18,8 +18,8 @@
     { "Idea_Title": "Weekly governance digest", "Content_Pillar": "Story", "Primary_Platform": "Newsletter", "Suggested_Format": "Newsletter", "Strategic_Goal": "Retention", "Effort_Score": 3, "Impact_Score": 4, "Confidence_Score": 3, "Status": "Captured", "Source": "Audience" }
   ],
   "content": [
-    { "Content_ID": "CNT-000001", "Idea_ID": "IDE-000001", "Title": "Why governance fails at scale", "Content_Pillar": "Authority", "Primary_Platform": "YouTube", "Format": "YouTube Long-Form", "Objective": "Awareness", "Priority": "High", "Status": "In Production", "Planned_Publish_Date": "2026-08-20" },
-    { "Content_ID": "CNT-000002", "Idea_ID": "IDE-000002", "Title": "3 board-meeting mistakes", "Content_Pillar": "Education", "Primary_Platform": "LinkedIn", "Format": "LinkedIn Post", "Objective": "Engagement", "Priority": "Medium", "Status": "Published", "Planned_Publish_Date": "2026-08-01", "Actual_Publish_Date": "2026-08-01", "Published_URL": "https://example.com/post" }
+    { "Content_ID": "CNT-000001", "Idea_ID": "IDE-000001", "Title": "Why governance fails at scale", "Content_Pillar": "Authority", "Primary_Platform": "YouTube", "Format": "YouTube Long-Form", "Objective": "Reach", "Priority": "High", "Status": "In Production", "Planned_Publish_Date": "2026-08-20" },
+    { "Content_ID": "CNT-000002", "Idea_ID": "IDE-000002", "Title": "3 board-meeting mistakes", "Content_Pillar": "Education", "Primary_Platform": "LinkedIn", "Format": "LinkedIn Post", "Objective": "Engage", "Priority": "Medium", "Status": "Published", "Planned_Publish_Date": "2026-08-01", "Actual_Publish_Date": "2026-08-01", "Published_URL": "https://example.com/post" }
   ],
   "tasks": [
     { "Content_ID": "CNT-000001", "Task_Name": "Draft script", "Task_Type": "Writing", "Sequence": 4, "Priority": "High", "Status": "In Progress", "Estimated_Minutes": 180, "Due_Date": "2026-08-13", "Calendar_Sync_Status": "Not Synced", "Recovery_Status": "Not Required" },

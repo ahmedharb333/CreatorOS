@@ -5,17 +5,21 @@
  * seeding exercises the same ID assignment and validation as real writes
  * (see RECOMMENDATIONS R-05). Idempotent: does nothing if any workflow exists.
  *
- * Note (ASSUMPTIONS G3): the schema's Dependency_Sequence is single-valued, but the
- * YouTube long-form "Final QA" step logically depends on two predecessors (7 and 8).
- * The seed stores the primary (longest-path) predecessor; multi-dependency is deferred.
+ * Dependencies use the multi-valued `Dependency_Sequences` field (CSV of predecessor
+ * sequence numbers), resolving ASSUMPTIONS G3 / correction item 4. The YouTube long-form
+ * "Final QA" step depends on two predecessors (7 and 8) → stored as "7,8".
  *
  * @see docs/27_Default_Workflow_Library.md
+ * @see ARCHITECTURE_DECISION_RECORDS.md ADR-011
  */
 const WorkflowSeed = (function () {
 
   const MODULE = 'WorkflowSeed';
 
-  /** Each step: [seq, name, type, minutes, offsetDays, required, dep?]. `dep` defaults to seq-1. */
+  /**
+   * Each step: [seq, name, type, minutes, offsetDays, required, dep?].
+   * `dep` may be a number, an array of numbers (multi-dependency), or omitted (defaults to seq-1).
+   */
   const LIBRARY = [
     {
       id: 'WKF-000001', name: 'YouTube Long-Form', platform: 'YouTube', format: 'YouTube Long-Form',
@@ -28,7 +32,7 @@ const WorkflowSeed = (function () {
         [6, 'Record video or voiceover', 'Recording', 120, -5, true, 5],
         [7, 'Edit first cut', 'Editing', 240, -4, true, 6],
         [8, 'Create thumbnail', 'Design', 90, -3, true, 2],
-        [9, 'Final QA', 'QA', 60, -2, true, 7],
+        [9, 'Final QA', 'QA', 60, -2, true, [7, 8]],
         [10, 'Upload and metadata', 'Publishing', 60, -1, true, 9],
         [11, 'Publish', 'Publishing', 15, 0, true, 10],
         [12, 'Create repurposing plan', 'Repurposing', 45, 1, false, 11],
@@ -128,6 +132,33 @@ const WorkflowSeed = (function () {
   ];
 
   /**
+   * Normalize a step's dependency spec into a CSV of predecessor sequence numbers.
+   * @param {(number|number[]|undefined)} dep
+   * @param {number} seq This step's sequence (used for the sequential default).
+   * @returns {string} e.g. "7,8" or "3" or "" (no predecessor)
+   * @private
+   */
+  function dependenciesCsv(dep, seq) {
+    let list;
+    if (Array.isArray(dep)) list = dep;
+    else if (typeof dep === 'number') list = [dep];
+    else list = seq > 1 ? [seq - 1] : [];
+    return list.join(',');
+  }
+
+  /**
+   * Parse a `Dependency_Sequences` CSV back into an array of numbers (for M2 task generation).
+   * @param {string} csv
+   * @returns {number[]}
+   */
+  function parseDependencies(csv) {
+    if (csv == null || csv === '') return [];
+    return String(csv).split(',')
+      .map(function (x) { return parseInt(x.trim(), 10); })
+      .filter(function (n) { return !isNaN(n); });
+  }
+
+  /**
    * Load defaults if none present. Idempotent.
    * @param {boolean} [force] Rebuild even if workflows exist (defaults are restorable, docs 27 §10).
    * @returns {Object} ServiceResult
@@ -141,7 +172,6 @@ const WorkflowSeed = (function () {
     LIBRARY.forEach(function (wf) {
       wf.steps.forEach(function (s) {
         const seq = s[0];
-        const dep = s.length > 6 ? s[6] : (seq > 1 ? seq - 1 : '');
         records.push({
           Workflow_ID: wf.id,
           Workflow_Name: wf.name,
@@ -153,7 +183,7 @@ const WorkflowSeed = (function () {
           Task_Type: s[2],
           Default_Duration_Minutes: s[3],
           Offset_From_Publish_Days: s[4],
-          Dependency_Sequence: dep,
+          Dependency_Sequences: dependenciesCsv(s.length > 6 ? s[6] : undefined, seq),
           Required: s[5],
           Active: true,
         });
@@ -164,5 +194,5 @@ const WorkflowSeed = (function () {
     return ok('WORKFLOWS_LOADED', LIBRARY.length + ' workflows loaded.', { workflows: LIBRARY.length, steps: records.length });
   }
 
-  return { load: load, LIBRARY: LIBRARY };
+  return { load: load, parseDependencies: parseDependencies, LIBRARY: LIBRARY };
 })();

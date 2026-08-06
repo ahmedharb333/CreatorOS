@@ -67,8 +67,10 @@ const ENUMS = Object.freeze({
   IDEA_STATUS: ['Captured', 'Reviewed', 'Approved', 'Converted', 'Rejected', 'Archived'],
   IDEA_SOURCE: ['Manual', 'AI', 'Audience', 'Research', 'Trend', 'Competitor'],
   CONTENT_STATUS: ['Backlog', 'Approved', 'In Production', 'Ready', 'Scheduled', 'Published', 'Paused', 'Cancelled'],
-  // G2: provisional, CONFIG-driven objective list.
-  CONTENT_OBJECTIVE: ['Awareness', 'Engagement', 'Education', 'Conversion', 'Retention', 'Monetization'],
+  // Content Objective = the funnel job of ONE content piece (distinct from the idea-level Strategic Goal).
+  // Verb/stage vocabulary is deliberately disjoint from STRATEGIC_GOAL to prevent conceptual overlap.
+  // See docs/CONCEPTS_GOAL_VS_OBJECTIVE.md (correction item 3).
+  CONTENT_OBJECTIVE: ['Reach', 'Engage', 'Educate', 'Convert', 'Nurture', 'Monetize'],
   TASK_STATUS: ['Not Started', 'Ready', 'In Progress', 'Blocked', 'Completed', 'Skipped', 'Cancelled'],
   PRIORITY: ['Low', 'Medium', 'High', 'Critical'],
   CALENDAR_SYNC: ['Not Synced', 'Synced', 'Changed', 'Missing', 'Failed'],
@@ -226,7 +228,7 @@ const SCHEMA = Object.freeze({
     kind: 'table',
     idColumn: 'Step_ID',
     idPrefix: ID_PREFIX.WORKFLOW_STEP,
-    headers: ['Workflow_ID', 'Workflow_Name', 'Platform', 'Format', 'Step_ID', 'Task_Sequence', 'Task_Name', 'Task_Type', 'Default_Duration_Minutes', 'Offset_From_Publish_Days', 'Dependency_Sequence', 'Required', 'Active'],
+    headers: ['Workflow_ID', 'Workflow_Name', 'Platform', 'Format', 'Step_ID', 'Task_Sequence', 'Task_Name', 'Task_Type', 'Default_Duration_Minutes', 'Offset_From_Publish_Days', 'Dependency_Sequences', 'Required', 'Active'],
     frozenRows: 1,
     protect: 'headers',
     validations: {

@@ -1,0 +1,42 @@
+[INFO] WorkbookService: Workbook build complete
+[INFO] WorkflowSeed: Default workflows loaded
+[INFO] TestRunner: Test run complete: 24/24 passed
+INIT: WORKBOOK_READY — CreatorOS workbook initialized.
+CreatorOS Milestone 1 tests
+24 / 24 passed, 0 failed.
+
+All green.
+
+----- MARKDOWN (for TEST_RESULTS.md) -----
+
+## Executed run
+
+24 / 24 passed, 0 failed.
+
+| Suite | Case | Result | Detail |
+|---|---|---|---|
+| Schema | SCH-001 all 16 sheets exist | PASS |  |
+| Schema | SCH-002 verify() reports valid | PASS |  |
+| Schema | SCH-003 headers match schema, no duplicates | PASS |  |
+| Schema | SCH-004 CONFIG named ranges resolve | PASS |  |
+| Schema | SCH-005 schema version marker set | PASS |  |
+| Schema | SCH-006 protections exist on system sheets | PASS |  |
+| Schema | SCH-007 default workflows loaded (8 workflows) | PASS |  |
+| IdService | ID-001 next() returns PREFIX-000000 format | PASS |  |
+| IdService | ID-002 sequential ids are unique and increasing | PASS |  |
+| IdService | ID-003 reserve() returns a contiguous block | PASS |  |
+| IdService | ID-004 validate() enforces shape and prefix | PASS |  |
+| IdService | ID-005 ensureAtLeast never lowers a counter | PASS |  |
+| Validation | VAL-001 enum accepts members, rejects non-members | PASS |  |
+| Validation | VAL-002 integer range rejects out-of-range and non-integer | PASS |  |
+| Validation | VAL-003 url and date specs | PASS |  |
+| Validation | VAL-004 validateRecord flags bad idea scores | PASS |  |
+| Validation | VAL-005 strategic goal uses approved 7 values | PASS |  |
+| Validation | VAL-006 scheduled end must be after start | PASS |  |
+| Repository | REP-001 create idea assigns IDE id + timestamps | PASS |  |
+| Repository | REP-002 priority score computed by formula (5,4,2 → 3.3) | PASS |  |
+| Repository | REP-003 getById and find work by header | PASS |  |
+| Repository | REP-004 updateById changes field, keeps id, bumps Updated_At | PASS |  |
+| Repository | REP-005 invalid record rejected with RECORD_VALIDATION_FAILED | PASS |  |
+| Repository | REP-006 workflow steps ordered and complete | PASS |  |
+

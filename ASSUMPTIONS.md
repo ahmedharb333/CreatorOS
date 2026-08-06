@@ -73,25 +73,26 @@ no business rule is invented silently — each entry states **why**, the **optio
 - **Impact:** `Workflow_ID` prefix becomes `WKF` (was `WF-` in doc `06`) → logged as **D-02** in
   `DEVIATIONS.md`. All other prefixes are additive, not conflicting.
 
-### G2 — `CONTENT.Objective` enum undefined — ACCEPTED (provisional)
+### G2 — `CONTENT.Objective` enum undefined — RESOLVED (correction item 3)
 - **Why:** Workbook Schema marks `CONTENT.Objective` as `ENUM "configured objective"` but no value
-  list exists in any document.
-- **Decision:** Define a concise, funnel-aligned default set, stored in `CONFIG` and therefore
-  user-configurable: `Awareness, Engagement, Education, Conversion, Retention, Monetization`.
-- **Impact:** CONTENT validation uses this list; because it lives in `CONFIG`, the Product Owner can
-  refine it without a code change. Marked **provisional** — open to PO refinement (see `KNOWN_ISSUES` I-02).
+  list exists in any document, and it was easy to confuse with Strategic Goal.
+- **Decision:** Define a distinct, funnel-stage **verb** vocabulary that cannot be confused with the
+  Strategic Goal nouns: `Reach, Engage, Educate, Convert, Nurture, Monetize`. Documented authoritatively in
+  `docs/CONCEPTS_GOAL_VS_OBJECTIVE.md` and `ARCHITECTURE_DECISION_RECORDS.md` ADR-012.
+- **Impact:** `ENUMS.CONTENT_OBJECTIVE` + CONTENT validation use these 6 values; sample data updated.
+  Making the list end-user-editable at runtime is deferred (RECOMMENDATIONS R-06).
 
 ---
 
-### G3 — Single-valued `Dependency_Sequence` vs multi-predecessor step — ACCEPTED (provisional)
-- **Why:** Workbook Schema (`16` §7) types workflow `Dependency_Sequence` as a single `NUMBER`, but the
-  default library (`27`) YouTube long-form "Final QA" step depends on two predecessors (steps 7 **and** 8).
-- **Decision:** For Milestone 1 the seed stores the **primary (longest-path) predecessor** (step 7).
-  True multi-dependency is deferred; if task-generation scheduling later needs both edges, extend the
-  schema to a delimited `Dependency_Sequences` field (a MINOR schema bump) rather than overloading the
-  single value.
-- **Impact:** Task backward-scheduling in Milestone 2 uses one predecessor per step. Tracked in
-  `KNOWN_ISSUES` I-05.
+### G3 — Single-valued dependency vs multi-predecessor step — RESOLVED (correction item 4)
+- **Why:** Workbook Schema (`16` §7) typed workflow `Dependency_Sequence` as a single `NUMBER`, but the
+  default library (`27`) YouTube long-form "Final QA" step depends on two predecessors (steps 7 **and** 8),
+  and this had to be settled before M2 task-generation scheduling is built.
+- **Decision:** Replace the single field with multi-valued **`Dependency_Sequences`** (CSV of predecessor
+  sequence numbers, e.g. `"7,8"`). `WorkflowSeed.parseDependencies()` converts CSV → number[]. CSV chosen
+  over JSON for sheet readability. See `ARCHITECTURE_DECISION_RECORDS.md` ADR-011.
+- **Impact:** Task backward-scheduling in M2 can honor all predecessor edges. Deviation from doc 16's
+  single-NUMBER type recorded as `DEVIATIONS` D-03. `KNOWN_ISSUES` I-05 resolved.
 
 ## Design decisions
 

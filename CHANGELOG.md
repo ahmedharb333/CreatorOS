@@ -23,4 +23,16 @@ versioning with two tracked numbers: **PRODUCT_VERSION** (`MAJOR.MINOR.PATCH`) a
 - `WorkflowSeed.gs`: 8 default workflows (docs 27) loaded into WORKFLOWS.
 - `Menu.gs` / `Main.gs`: `onOpen` menu, first-run initialization (schema verify, counters, workflows, version).
 - `tests/`: GAS-native `TestRunner` + schema/ID/repository suites; menu entry `Run Tests`.
-- Documentation register: resolved C1–C3, filled G1–G2, recorded D1–D3, E1–E2 (see `ASSUMPTIONS.md`).
+- Documentation register: resolved C1–C3, filled G1–G3, recorded D1–D3, E1–E2 (see `ASSUMPTIONS.md`).
+
+### Milestone 1 — post-approval corrections (2026-08-06)
+
+- **Tests executed** (correction 1): added Node Apps Script mock (`tests/node/mock_gas.js`) + runner; GAS
+  suites now execute — **24/24 passed**; pure-logic **34/34**; `TEST_RESULTS.md` updated with actual results.
+- **Folder READMEs** (correction 2): `src/services`, `src/providers`, `src/ui` responsibilities documented.
+- **Goal vs Objective** (correction 3): `CONTENT.Objective` redefined to a distinct funnel-verb vocabulary
+  (`Reach, Engage, Educate, Convert, Nurture, Monetize`); `docs/CONCEPTS_GOAL_VS_OBJECTIVE.md` added; G2 resolved.
+- **Multi-dependency** (correction 4): workflow `Dependency_Sequence` → `Dependency_Sequences` (CSV);
+  `parseDependencies()` added; YouTube long-form Final QA stores `"7,8"`; G3 resolved, D-03 recorded, ADR-011.
+- **ADRs** (correction 5): `ARCHITECTURE_DECISION_RECORDS.md` added (ADR-001…013).
+- `.claspignore` excludes `tests/node/**` (Node-only harness not pushed to Apps Script).
