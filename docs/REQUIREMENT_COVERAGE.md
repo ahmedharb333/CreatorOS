@@ -1,10 +1,12 @@
-# CreatorOS — Requirement Coverage (Milestone 1)
+# CreatorOS — Requirement Coverage (cumulative, through Milestone 4)
 
-Maps every requirement touched by Milestone 1 to its implementation status, and lists requirements owned
-by later milestones. Extends `24_Requirements_Traceability_Matrix.md`.
+Live, cumulative map of every functional/non-functional requirement to its implementation status across all
+delivered milestones (M1 foundational · M2 core domain · M3 calendar · M4 recovery & analytics), with the
+remaining requirements owned by later milestones. Extends `24_Requirements_Traceability_Matrix.md`.
 
 **Status legend:** `Passed` (implemented + tests executed green — pure-logic and/or GAS suites via the Node
-Apps Script mock) · `Not Started` (later milestone). On-Google run is a recommended final confirmation (I-01).
+Apps Script mock) · `Not Started` (later milestone). On-Google run is a recommended final confirmation (I-01);
+Milestone 3 additionally requires bound-project Calendar evidence (I-06).
 
 ## Coverage rule
 
