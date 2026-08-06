@@ -4,21 +4,19 @@
 implemented in v1** (out of scope per the charter). Its purpose is to keep Calendar, Notifications, and AI
 architecturally tier-friendly so future editions don't require rework.
 
-Aligns with `docs/02_Product_Strategy.md` (which already defines Basic / Pro / future Agency editions) and
-adopts the Product Owner's naming: **Free · Pro · Team**.
+Aligns with `docs/02_Product_Strategy.md` and the approved editions: **Basic · Pro · Team**.
 
-> ⚠️ **Open decision (D-ROADMAP-1):** `02_Product_Strategy.md` specifies a **one-time purchase** model with a
-> paid **Basic** edition ($19–29) and **Pro** ($39–59) — there is **no free tier** in the approved strategy.
-> The proposed "Free" edition conflicts with that. Please confirm one of:
-> (a) "Free" = a genuine free tier (new pricing model — a strategy change), or
-> (b) "Free" is a rename of the paid **Basic** edition. This roadmap assumes (b) unless you say otherwise, and
-> does not change v1 scope either way.
+> ✅ **D-ROADMAP-1 (decided 2026-08-07):** **No genuine Free tier.** Editions are **Basic** (paid one-time
+> $19–29), **Pro** (paid one-time $39–59), and **Team** (future paid edition, pricing TBD). The current
+> one-time-purchase model stands. **No billing, entitlement, or tier-gating logic is implemented in M3** —
+> Calendar, AI, reminders, and recovery remain capability-based and configurable so tiers can be added later
+> without architectural rewrites.
 
 ---
 
 ## Edition matrix (target)
 
-| Capability | Free / Basic | Pro | Team (future) |
+| Capability | Basic | Pro | Team (future) |
 |---|:--:|:--:|:--:|
 | Setup, ideas, content DB | ✓ | ✓ | ✓ |
 | Workflow library + task generation | ✓ (default library) | ✓ (+ clone/customize) | ✓ |
@@ -44,7 +42,7 @@ The following are **design principles** to honor now so tiers remain a config ch
 - `CalendarService` takes the **calendar id as a parameter** (never hard-codes a single global calendar) →
   Team multi-calendar becomes additive.
 - Push/sync is a **capability** ("calendar_push") and the auto-sync trigger is a separate opt-in feature →
-  Free can ship with calendar **view** only; Pro flips the capability on with no code change.
+  Basic can ship with calendar **view** only; Pro flips the capability on with no code change.
 - See `docs/Calendar_Event_Contract.md §13`.
 
 ### Milestone 4 — Recovery / Repurposing
@@ -75,5 +73,5 @@ adoption, willingness to pay recurring for Pro/Team). Revisit pricing once D-ROA
 
 ## Next step
 
-Confirm D-ROADMAP-1 (Free tier vs. paid Basic) and approve the tier boundaries. The Calendar Event Contract
-already reflects these constraints, so approving both together keeps Milestone 3 unblocked.
+D-ROADMAP-1 is decided (Basic/Pro/Team, no Free tier). The Calendar Event Contract reflects these constraints,
+so Milestone 3 proceeds capability-based with no tier-gating or billing implemented.

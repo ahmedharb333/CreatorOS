@@ -140,3 +140,24 @@ dependency graph. `Dependency_Task_ID` is kept as the primary/latest predecessor
 history is immutable unless an explicit repair/migration runs).
 **Consequences:** Full dependency fidelity for scheduling. New JSON validation type. Additive column
 (appended at end, order-safe); schema stays version 1 (un-deployed, no migration — see DEVIATIONS D-04).
+
+## ADR-018 — Calendar sync: task-as-source-of-truth, marker idempotency, explicit-only (Milestone 3)
+**Context:** Tasks must project onto Google Calendar work blocks and stay consistent without a backend, without
+duplicates, and without destroying user edits.
+**Decision (approved, rulings O-1…O-4):**
+- **Task is source of truth (O-1):** CalendarService manages only title/start/end/description/priority-status
+  markers via `setTitle/setTime/setDescription`; it never calls attendee/conferencing/attachment setters, so
+  those remote fields are preserved. No bidirectional reconciliation in M3.
+- **Idempotency:** the `Calendar_Event_ID` on the task is the fast path; the `Task ID` marker embedded in the
+  event description is the authoritative duplicate key. Duplicate search uses a **±1 day** window around
+  `Scheduled_Start` (O-2). No `Scheduled_Start` ⇒ not push-eligible.
+- **Explicit-only (O-4):** Push / Sync / Recreate-Missing are user-initiated; **no auto-sync trigger** in M3.
+- **Task work blocks only (O-3):** all-day publishing milestones deferred.
+- **Non-destructive:** completion keeps the event (optional `✓` prefix); deletion requires confirmation.
+- **Partial failure is first-class:** bulk ops return per-record results and never abort the batch.
+- **Staged scope:** calendar scope declared in the manifest only now that CalendarService ships (DEVIATIONS D-05);
+  authorized when the user enables Calendar.
+- **Capability-based:** push/sync gated by a `calendar_push` capability defaulting on, so commercial tiers can
+  gate it later via config, not code (COMMERCIAL_ROADMAP).
+**Consequences:** Idempotent, duplicate-safe, non-destructive calendar integration aligned to the approved
+contract. Bidirectional reconciliation, publishing milestones, and auto-sync are explicitly future work.

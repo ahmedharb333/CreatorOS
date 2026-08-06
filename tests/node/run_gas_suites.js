@@ -7,7 +7,8 @@
  * Run:  node tests/node/run_gas_suites.js
  */
 'use strict';
-require('./mock_gas'); // installs GAS globals
+const mock = require('./mock_gas'); // installs GAS globals
+mock.registerCalendar('creatoros-test-cal', 'Test Calendar'); // for the Calendar suite
 
 const fs = require('fs');
 const path = require('path');
@@ -25,11 +26,12 @@ const srcFiles = [
   'repositories/RepurposingRepository.js', 'repositories/WeeklyPlanRepository.js', 'repositories/SettingsRepository.js',
   'services/SetupService.js', 'services/IdeaService.js', 'services/ContentService.js',
   'services/WorkflowService.js', 'services/TaskService.js', 'services/CapacityService.js', 'services/PlanningService.js',
+  'services/CalendarService.js',
   'WorkbookService.js', 'WorkflowSeed.js', 'Menu.js', 'Main.js',
 ].map(function (f) { return path.join(SRC, f); });
 
 const testFiles = [
-  'TestRunner.js', 'SchemaTests.js', 'IdTests.js', 'ValidationTests.js', 'RepositoryTests.js', 'DomainTests.js', 'PlanningTests.js',
+  'TestRunner.js', 'SchemaTests.js', 'IdTests.js', 'ValidationTests.js', 'RepositoryTests.js', 'DomainTests.js', 'PlanningTests.js', 'CalendarTests.js',
 ].map(function (f) { return path.join(TESTS, f); });
 
 let code = '';

@@ -216,6 +216,42 @@ function formatDate(date, tz, fmt) {
     .replace(/'T'/g, 'T');
 }
 
+// ---------- Calendar mock ----------
+let _evtSeq = 0;
+class MockEvent {
+  constructor(cal, title, start, end, opts) {
+    this.cal = cal; this.id = 'evt-' + (++_evtSeq); this.title = title;
+    this.start = start; this.end = end; this.description = (opts && opts.description) || ''; this.deleted = false;
+    this.attendees = []; // never touched by CalendarService — used to prove O-1
+  }
+  getId() { return this.id; }
+  getTitle() { return this.title; }
+  getStartTime() { return this.start; }
+  getEndTime() { return this.end; }
+  getDescription() { return this.description; }
+  setTitle(t) { this.title = t; return this; }
+  setTime(s, e) { this.start = s; this.end = e; return this; }
+  setDescription(d) { this.description = d; return this; }
+  deleteEvent() { this.deleted = true; }
+}
+class MockCalendar {
+  constructor(id, name) { this.id = id; this.name = name || id; this.events = []; }
+  getId() { return this.id; }
+  getName() { return this.name; }
+  createEvent(title, start, end, opts) { const e = new MockEvent(this, title, start, end, opts); this.events.push(e); return e; }
+  getEventById(id) { const e = this.events.find(function (x) { return x.id === id && !x.deleted; }); return e || null; }
+  getEvents(from, to) {
+    return this.events.filter(function (e) {
+      return !e.deleted && e.end.getTime() > from.getTime() && e.start.getTime() < to.getTime();
+    });
+  }
+}
+const _calendars = {};
+globalThis.CalendarApp = {
+  getCalendarById: function (id) { return _calendars[id] || null; },
+  getDefaultCalendar: function () { if (!_calendars['default']) _calendars['default'] = new MockCalendar('default', 'Default'); return _calendars['default']; },
+};
+
 // ---------- Install globals ----------
 const _ss = new MockSpreadsheet();
 globalThis.SpreadsheetApp = {
@@ -235,4 +271,8 @@ globalThis.LockService = { getScriptLock: function () { return { tryLock: functi
 globalThis.Utilities = { formatDate: formatDate, sleep: function () {}, getUuid: function () { return 'mock-uuid-' + Math.random().toString(36).slice(2); } };
 globalThis.Session = { getScriptTimeZone: function () { return 'Etc/GMT'; } };
 
-module.exports = { spreadsheet: _ss };
+module.exports = {
+  spreadsheet: _ss,
+  registerCalendar: function (id, name) { _calendars[id] = new MockCalendar(id, name); return _calendars[id]; },
+  getCalendar: function (id) { return _calendars[id] || null; },
+};

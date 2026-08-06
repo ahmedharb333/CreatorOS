@@ -41,6 +41,7 @@ const TestRunner = (function () {
       { suite: 'Repository', cases: RepositoryTests_() },
       { suite: 'Domain', cases: (typeof DomainTests_ === 'function') ? DomainTests_() : [] },
       { suite: 'Planning', cases: (typeof PlanningTests_ === 'function') ? PlanningTests_() : [] },
+      { suite: 'Calendar', cases: (typeof CalendarTests_ === 'function') ? CalendarTests_() : [] },
     ];
   }
 

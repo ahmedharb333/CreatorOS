@@ -56,3 +56,17 @@ versioning with two tracked numbers: **PRODUCT_VERSION** (`MAJOR.MINOR.PATCH`) a
 - **Menu**: Complete Setup, Reopen Setup, Build Weekly Plan, Open Today.
 - **Tests**: Domain (12) + Planning (5) suites added. Executed **75/75 green** (34 pure + 41 GAS-mock).
   Fixed two `Sequence` vs `Task_Sequence` field bugs (dependency wiring + mode filter), now regression-covered.
+
+## [Unreleased] — Milestone 3: Calendar Integration
+
+- **CalendarService** (FR-009/010/011): `testConnection`, `pushTasks`, `syncTasks`, `deleteLinkedEvent`,
+  `recreateMissingEvent`. Task-as-source-of-truth (ADR-018): manages only title/start/end/description, never
+  attendees/conferencing/attachments (O-1). Idempotent via `Task ID` marker + `Calendar_Event_ID`; ±1 day
+  duplicate window (O-2); explicit actions only, no auto-sync (O-4); task work blocks only, no all-day
+  milestones (O-3). Per-record partial-failure reporting; narrow calendar queries.
+- **Manifest**: added the `calendar` OAuth scope (declared only now that Calendar ships — DEVIATIONS D-05).
+- **Menu**: Connect Calendar, Push to Calendar, Sync Calendar, Recreate Missing Events.
+- **Tests**: Calendar suite (10) added — **85/85 green** (34 pure + 51 GAS-mock). Bound-project integration
+  plan `docs/Calendar_Integration_Test_Plan.md` (required before M3 approval, I-06).
+- **Docs**: Calendar_Event_Contract approved (O-1..O-4), COMMERCIAL_ROADMAP (Basic/Pro/Team, D-ROADMAP-1),
+  ADR-018, DEVIATIONS D-05.

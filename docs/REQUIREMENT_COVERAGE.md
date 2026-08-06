@@ -41,11 +41,20 @@ Apps Script mock) · `Not Started` (later milestone). On-Google run is a recomme
 | FR-007 | Weekly planning (build/approve) + auto-allocation | `PlanningService` | PLN-BUILD, PLN-ALLOCATE | **Passed** |
 | FR-008 | Today view (priority order) | `PlanningService.getTodayPlan/renderTodayView` | PLN-TODAY (+ render smoke) | **Passed** |
 
+## Milestone 3 — Calendar (Passed via mock; **bound-project integration evidence required** for approval)
+
+| Req | Requirement | Implementation | Test(s) | Status |
+|---|---|---|---|---|
+| FR-009 | Calendar connection + test | `CalendarService.testConnection` | CAL-001 | **Passed (mock)** · on-Google pending (I-06) |
+| FR-010 | Event creation (idempotent, no duplicates, partial-failure) | `CalendarService.pushTasks` | CAL-002, CAL-003, CAL-007, CAL-009 | **Passed (mock)** · on-Google pending |
+| FR-011 | Calendar updates / sync / missing-recovery / delete | `CalendarService.syncTasks/recreateMissingEvent/deleteLinkedEvent` | CAL-004..006, CAL-008, CAL-010 | **Passed (mock)** · on-Google pending |
+
+Bound-project procedure + results template: `docs/Calendar_Integration_Test_Plan.md` (INT-CAL-001…012).
+
 ## Requirements owned by later milestones (Not Started, by instruction)
 
 | Req | Requirement | Milestone |
 |---|---|---|
-| FR-009 / FR-010 / FR-011 | Calendar connection / event creation / updates | M3 |
 | FR-012 / FR-013 | Overdue detection / recovery workflow | M4 |
 | FR-014 | Repurposing | M4 |
 | FR-015 | Performance entry | M4 |
@@ -58,8 +67,9 @@ Apps Script mock) · `Not Started` (later milestone). On-Google run is a recomme
 
 ## Sign-off snapshot
 
-- Foundational (M1) + core-domain (M2) scope: **100% implemented and executed green.**
-- Executed tests: **34/34 pure-logic**, **41/41 GAS suites via mock**, **34/34 `node --check`** = **75/75**, 0 failed.
+- M1 (foundational) + M2 (core domain) + M3 (calendar) scope: **implemented and executed green via mock.**
+- Executed tests: **34/34 pure-logic**, **51/51 GAS suites via mock**, **36/36 `node --check`** = **85/85**, 0 failed.
+- **M3 approval additionally requires bound-project integration evidence** (`Calendar_Integration_Test_Plan.md`, I-06).
 - On-Google run recommended as final confirmation (I-01, downgraded).
 - Unresolved Critical defects: **0.** Unresolved High defects: **0.**
 - Recommendation: **Milestone 1 approved with corrections applied**; proceed to Milestone 2.

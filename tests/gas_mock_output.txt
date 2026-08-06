@@ -31,10 +31,53 @@
 [INFO] ContentService: Content created
 [INFO] PlanningService: Auto-allocation complete
 [INFO] ContentService: Content created
-[INFO] TestRunner: Test run complete: 41/41 passed
+[INFO] CalendarService: Calendar connected
+[ERROR] CalendarService: That calendar could not be found. Reselect a calendar.
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] CalendarService: push batch complete
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] CalendarService: sync batch complete
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] CalendarService: sync batch complete
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] CalendarService: sync batch complete
+[INFO] CalendarService: Missing event recreated
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] CalendarService: Linked event deleted
+[INFO] ContentService: Content created
+[INFO] CalendarService: push batch complete
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] CalendarService: push batch complete
+[INFO] CalendarService: sync batch complete
+[INFO] TestRunner: Test run complete: 51/51 passed
 INIT: WORKBOOK_READY — CreatorOS workbook initialized.
 CreatorOS Milestone 1 tests
-41 / 41 passed, 0 failed.
+51 / 51 passed, 0 failed.
 
 All green.
 
@@ -42,7 +85,7 @@ All green.
 
 ## Executed run
 
-41 / 41 passed, 0 failed.
+51 / 51 passed, 0 failed.
 
 | Suite | Case | Result | Detail |
 |---|---|---|---|
@@ -87,4 +130,14 @@ All green.
 | Planning | PLN-BUILD builds week record + approval is one-shot | PASS |  |
 | Planning | PLN-ALLOCATE assigns Scheduled_Start/End on work days | PASS |  |
 | Planning | PLN-TODAY sorts tasks into overdue / due-today / blocked | PASS |  |
+| Calendar | CAL-001 testConnection succeeds for a valid id, fails for unknown | PASS |  |
+| Calendar | CAL-002 pushTasks creates one event and links it | PASS |  |
+| Calendar | CAL-003 re-push is idempotent (updates, no duplicate) | PASS |  |
+| Calendar | CAL-004 syncTasks updates a changed time | PASS |  |
+| Calendar | CAL-005 externally deleted event is detected as Missing (not recreated) | PASS |  |
+| Calendar | CAL-006 recreateMissingEvent relinks and marks Synced | PASS |  |
+| Calendar | CAL-007 partial failure: one eligible, one ineligible | PASS |  |
+| Calendar | CAL-008 deleteLinkedEvent removes the event and clears the link | PASS |  |
+| Calendar | CAL-009 unapproved week is not push-eligible | PASS |  |
+| Calendar | CAL-010 O-1: managed update preserves attendees (unmanaged fields) | PASS |  |
 

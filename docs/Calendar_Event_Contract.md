@@ -1,7 +1,7 @@
 # CreatorOS — Calendar Event Contract (Milestone 3 design)
 
-**Status:** DRAFT for Product Architect / QA approval. **No CalendarService code ships until this is approved.**
-Product 1.0.0 · Schema 1 · 2026-08-07
+**Status:** ✅ **APPROVED** (2026-08-07) with rulings O-1…O-4 and D-ROADMAP-1 (see §14). Implementation authorized.
+Product 1.0.0 · Schema 1
 
 This contract defines how CreatorOS tasks become Google Calendar work blocks and how the two stay consistent.
 It is derived from `18_Calendar_Synchronization.md`, `17_Service_Contracts.md §10`, `20_Error_Catalog.md §8`,
@@ -48,8 +48,13 @@ Event content written by CreatorOS (docs 18 §4):
 - **Reminder:** the configured default reminder minutes (optional).
 - **Calendar:** the single calendar id from User Properties `CALENDAR_ID` (mirrored, non-secret, into CONFIG).
 
-CreatorOS writes only Title/Start/End/Description/Reminder. It does **not** manage other event fields
-(attendees, colors set by the user, etc.).
+**Managed fields (ruling O-1 — task is source of truth):** CreatorOS manages exactly **title, start time,
+end time, description, and the priority/status markers** (inside the description). On an explicit sync it may
+overwrite remote edits to those managed fields. It **preserves unrelated remote fields where practical and
+never overwrites guest lists, conferencing details, or manually added attachments unless CreatorOS created
+them** — this holds naturally because CalendarService only calls the managed setters (`setTitle/setTime/
+setDescription`) and never touches attendees/conferencing/attachments. This behavior must be stated clearly
+in the user guide. **No bidirectional reconciliation in M3.**
 
 ## 3. Push eligibility
 
@@ -193,7 +198,7 @@ Every user-facing error states what failed, the affected record, whether data ch
 Per the commercial roadmap (`COMMERCIAL_ROADMAP.md`), Calendar is designed so tiers gate **behavior via
 configuration, not code rewrites**:
 
-- **Free:** manual push/sync only; single calendar; no auto-sync trigger; no reminders.
+- **Basic:** manual push/sync only; single calendar; no auto-sync trigger; no reminders.
 - **Pro:** optional scheduled auto-sync trigger, email reminders (M5), and (future) multiple calendars.
 - **Team:** (future) shared/team calendars — the calendar id abstraction already isolates "which calendar",
   so multi-calendar is an additive change, not a redesign.
@@ -203,14 +208,19 @@ auto-sync and reminders are separate opt-in features behind flags; nothing assum
 calendar in a way that blocks Team. **No tier gating or billing is implemented in v1** (out of scope) — this
 is a design constraint only.
 
-## 14. Open questions for approval
+## 14. Approved rulings (2026-08-07)
 
-- **O-1 — Remote-edit reconciliation:** v1 treats the task as source of truth and does not diff remote event
-  content (only existence). Acceptable for v1, or should sync detect and warn on user-edited managed fields?
-- **O-2 — Marker-search window:** ±1 day around `Scheduled_Start` for duplicate detection — wider/narrower?
-- **O-3 — Publishing milestones:** create optional all-day "Publish {Content}" events from
-  `Planned_Publish_Date`, or keep M3 to task work-blocks only?
-- **O-4 — Auto-sync trigger:** include an opt-in time-based sync trigger in M3, or defer to M5 with notifications?
+- **O-1 — Remote-edit reconciliation:** **Task-as-source-of-truth for v1.** Managed fields = title, start,
+  end, description, priority/status markers; remote edits to these may be overwritten on the next explicit
+  sync. Preserve unrelated remote fields; never overwrite guest lists / conferencing / manually added
+  attachments unless CreatorOS created them. Document in the user guide. **No bidirectional reconciliation in M3.**
+- **O-2 — Duplicate-search window:** **±1 day** around `Scheduled_Start`; the **Task ID marker is the
+  authoritative** duplicate identifier. **A task with no `Scheduled_Start` is not push-eligible.** Do not
+  broaden the window unless recovery logic explicitly requires it.
+- **O-3 — Publishing milestones:** **Deferred.** M3 creates **task work blocks only**. Optional all-day
+  publishing milestones may be added later, after core task sync is stable.
+- **O-4 — Auto-sync trigger:** **Deferred.** M3 supports **explicit Push / Sync / Recreate Missing** only.
+  No automatic sync trigger in M3; a later notification/automation milestone may add an opt-in trigger.
 
 ## 15. Acceptance criteria (from the PRD, must pass before M3 sign-off)
 

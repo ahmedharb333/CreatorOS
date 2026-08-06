@@ -22,6 +22,11 @@ function buildMenu_() {
     .addItem('Build Weekly Plan', 'menuBuildWeeklyPlan')
     .addItem('Open Today', 'menuOpenToday')
     .addSeparator()
+    .addItem('Connect Calendar', 'menuConnectCalendar')
+    .addItem('Push to Calendar', 'menuPushCalendar')
+    .addItem('Sync Calendar', 'menuSyncCalendar')
+    .addItem('Recreate Missing Events', 'menuRecreateMissing')
+    .addSeparator()
     .addItem('Run Tests', 'menuRunTests')
     .addSeparator()
     .addItem('About CreatorOS', 'menuAbout')
@@ -67,6 +72,45 @@ function menuOpenToday() {
   PlanningService.renderTodayView(new Date());
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEETS.TODAY);
   if (sheet) SpreadsheetApp.setActiveSheet(sheet);
+}
+
+/** Menu: connect a Google Calendar (adds the calendar scope on authorization). */
+function menuConnectCalendar() {
+  const ui = SpreadsheetApp.getUi();
+  const resp = ui.prompt('Connect Calendar', 'Enter your Google Calendar ID (e.g. you@gmail.com or a shared calendar id):', ui.ButtonSet.OK_CANCEL);
+  if (resp.getSelectedButton() !== ui.Button.OK) return;
+  const result = CalendarService.testConnection(resp.getResponseText().trim());
+  ui.alert('CreatorOS', result.message, ui.ButtonSet.OK);
+}
+
+/** Menu: push eligible, approved-week tasks to Calendar (explicit action). */
+function menuPushCalendar() {
+  toast_(CalendarService.pushTasks(eligibleTaskIds_()).message, 'CreatorOS');
+}
+
+/** Menu: reconcile linked/changed tasks with Calendar (explicit action). */
+function menuSyncCalendar() {
+  toast_(CalendarService.syncTasks(linkedTaskIds_()).message, 'CreatorOS');
+}
+
+/** Menu: recreate events for tasks flagged Missing (explicit recovery). */
+function menuRecreateMissing() {
+  const missing = new TaskRepository().getAll().filter(function (t) { return t.Calendar_Sync_Status === 'Missing'; });
+  let n = 0;
+  missing.forEach(function (t) { if (CalendarService.recreateMissingEvent(t.Task_ID).success) n++; });
+  toast_(n + ' event(s) recreated.', 'CreatorOS');
+}
+
+/** @private Open tasks with a scheduled start not already Synced. */
+function eligibleTaskIds_() {
+  return new TaskRepository().getAll().filter(function (t) {
+    return ['Not Started', 'Ready', 'In Progress', 'Blocked'].indexOf(t.Status) !== -1 && t.Scheduled_Start && t.Calendar_Sync_Status !== 'Synced';
+  }).map(function (t) { return t.Task_ID; });
+}
+
+/** @private Tasks that have a linked event or a pending change. */
+function linkedTaskIds_() {
+  return new TaskRepository().getAll().filter(function (t) { return t.Calendar_Event_ID || t.Calendar_Sync_Status === 'Changed'; }).map(function (t) { return t.Task_ID; });
 }
 
 /** Menu: load the default workflow library. */
