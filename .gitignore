@@ -17,3 +17,6 @@ Thumbs.db
 *.key
 secrets/
 credentials.json
+
+# Release build artifact (regenerated from staging)
+*.zip

@@ -1,0 +1,17 @@
+{
+  "name": "creatoros",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CreatorOS — execution operating system for solo creators (Google Sheets + Apps Script). Milestone 1: workbook, IDs, config, repositories, workflow library.",
+  "scripts": {
+    "test:pure": "node tests/node_pure_tests.js",
+    "check": "node -e \"const{execSync}=require('child_process');const fs=require('fs');const g=(d)=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?g(d+'/'+e.name):(e.name.endsWith('.js')?[d+'/'+e.name]:[]));let ok=0,f=g('src').concat(g('tests'));f.forEach(p=>{try{execSync('node --check '+JSON.stringify(p));ok++;}catch(e){console.log('FAIL '+p);}});console.log('node --check: '+ok+'/'+f.length+' OK');\"",
+    "push": "clasp push",
+    "schema": "echo Run CreatorOS > Initialize / Repair Workbook inside the bound Google Sheet"
+  },
+  "engines": { "node": ">=18" },
+  "devDependencies": {
+    "@google/clasp": "^2.4.2"
+  },
+  "license": "UNLICENSED"
+}
