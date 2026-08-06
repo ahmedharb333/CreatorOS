@@ -105,3 +105,21 @@ mock of the Sheets/Properties/Lock runtime (`tests/node/`) executes those same s
 for CI-style evidence without Google.
 **Consequences:** 58/58 executed green pre-deployment; the on-Google run remains the final confirmation, not a
 coverage gap. Risk: mock fidelity — mitigated by keeping the mock limited to relied-upon semantics.
+
+## ADR-014 — Sheet-driven Setup with a UI-agnostic service (Milestone 2)
+**Context:** M2 needs setup capture; docs 25 envisions a wizard, but building HTML now is heavy.
+**Decision (approved):** The SETUP tab is the authoritative input; the creator edits Setting_Value cells and
+runs "Complete Setup". All logic (validation, persistence, CONFIG mirroring, onboarding status) lives in
+`SetupService` behind UI-agnostic APIs (`getSetupState/validateSetup/saveSettings/completeSetup/rerunSetup`),
+so a future HTML onboarding wizard can reuse them without backend changes. No wizard is built in M2.
+**Consequences:** Ships fast; rerun preserves all records; secure API-key entry still uses a dialog (M5).
+
+## ADR-015 — Task generation sets due dates only, not scheduled times (Milestone 2)
+**Context:** M2 generates tasks; who owns Scheduled_Start/End and calendar placement?
+**Decision (approved):** `generateTasks` computes `Due_Date = Planned_Publish_Date + Offset_From_Publish_Days`
+(true calendar dates), `Estimated_Minutes`, and dependencies only. `Scheduled_Start/End` are left empty;
+assigning work-block times and calendar placement belongs to `PlanningService` (M2 planning increment) and
+`CalendarService` (M3). Schema fields exist now but stay unpopulated.
+**Consequences:** Clean separation; generation is idempotent per mode (CREATE_ONLY / APPEND_MISSING /
+REPLACE_OPEN_TASKS) and never replaces completed tasks. Task `Dependency_Task_ID` stores the primary
+(latest) predecessor; due-date offsets already encode the full ordering.

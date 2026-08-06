@@ -228,6 +228,20 @@ class BaseRepository {
   }
 
   /**
+   * Delete a record by id (removes its row). Used by controlled regeneration/recovery,
+   * never for silent bulk loss. Callers are responsible for confirmation.
+   * @param {string} id
+   * @returns {boolean} true if a row was deleted
+   */
+  deleteById(id) {
+    const existing = this.getById(id);
+    if (!existing) return false;
+    this._sheet().deleteRow(existing._row);
+    this._headerMap = null;
+    return true;
+  }
+
+  /**
    * Formula string for a formula-owned column. Overridden by subclasses.
    * @param {string} header
    * @param {number} rowNumber 1-based sheet row

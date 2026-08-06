@@ -16,6 +16,9 @@ function buildMenu_() {
     .addItem('Load Default Workflows', 'menuLoadWorkflows')
     .addItem('Verify Schema', 'menuVerifySchema')
     .addSeparator()
+    .addItem('Complete Setup', 'menuCompleteSetup')
+    .addItem('Reopen Setup', 'menuReopenSetup')
+    .addSeparator()
     .addItem('Run Tests', 'menuRunTests')
     .addSeparator()
     .addItem('About CreatorOS', 'menuAbout')
@@ -32,6 +35,22 @@ function menuOpenHome() {
 function menuInitializeWorkbook() {
   const result = initializeWorkbook();
   toast_(result.success ? 'Workbook ready.' : ('Init issue: ' + result.message), result.success ? 'CreatorOS' : 'CreatorOS — check logs');
+}
+
+/** Menu: validate + complete setup from the SETUP tab (sheet-driven, ADR-014). */
+function menuCompleteSetup() {
+  const result = SetupService.completeSetup();
+  if (result.success) {
+    toast_(result.message, 'CreatorOS');
+  } else {
+    SpreadsheetApp.getUi().alert('Setup incomplete', result.message + (result.errors && result.errors[0] ? '\n\n' + (result.errors[0].suggestedAction || '') : ''), SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+}
+
+/** Menu: reopen setup for editing without touching records. */
+function menuReopenSetup() {
+  const result = SetupService.rerunSetup();
+  toast_(result.message, 'CreatorOS');
 }
 
 /** Menu: load the default workflow library. */

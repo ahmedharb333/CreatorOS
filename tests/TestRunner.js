@@ -39,6 +39,7 @@ const TestRunner = (function () {
       { suite: 'IdService', cases: IdTests_() },
       { suite: 'Validation', cases: ValidationTests_() },
       { suite: 'Repository', cases: RepositoryTests_() },
+      { suite: 'Domain', cases: (typeof DomainTests_ === 'function') ? DomainTests_() : [] },
     ];
   }
 
