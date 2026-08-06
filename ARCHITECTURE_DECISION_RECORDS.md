@@ -161,3 +161,23 @@ duplicates, and without destroying user edits.
   gate it later via config, not code (COMMERCIAL_ROADMAP).
 **Consequences:** Idempotent, duplicate-safe, non-destructive calendar integration aligned to the approved
 contract. Bidirectional reconciliation, publishing milestones, and auto-sync are explicitly future work.
+
+## ADR-019 — Hide the Complexity: Creator Mode vs Advanced Workspace (product principle)
+**Context:** Product direction (2026-08-07): CreatorOS is an application whose presentation layer happens to be
+Google Sheets. Internal sophistication may grow, but the creator's surface must get progressively simpler —
+"the creator should only see what helps them publish."
+**Decision (binding for all future work):**
+- **Creator Mode** exposes only: **HOME, TODAY, IDEAS, CONTENT, DASHBOARD.** Everything else
+  (SETUP, TASKS, WORKFLOWS, WEEKLY_PLAN, CALENDAR, REPURPOSING, PERFORMANCE, AI_LOG, SYSTEM_LOG, CONFIG,
+  CHANGELOG) is a **system sheet** — eventually hidden.
+- Creators never need to understand repositories, services, workflow tables, IDs, logs, schema versions,
+  validation tables, or configuration internals.
+- **No feature may require the user to interact directly with an internal sheet.** All creator interactions go
+  through menus/dialogs backed by the (UI-agnostic) services. Services stay the durable interface.
+- A future **Advanced Workspace** ("Enable Advanced Workspace") toggle may reveal system sheets for power
+  users. **Not implemented now** — but nothing may block this separation.
+**Enabling step (proposed, low-risk):** tag each sheet in `Constants.SCHEMA` with `visibility: 'creator' |
+'system'` (inert metadata) so a later Creator Mode can hide system sheets by config, with zero refactor.
+**Consequences:** M4+ features (recovery, repurposing, performance, dashboard) must be menu/dialog/service-
+driven; DASHBOARD/TODAY are rendered (computed) creator-facing views; PERFORMANCE/REPURPOSING remain data
+sheets but are treated as system-internal, with creator interaction via services, not raw editing.
