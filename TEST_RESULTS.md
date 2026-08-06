@@ -17,26 +17,28 @@ protections, Script/User properties, LockService. It is not the real Google engi
 remains the final acceptance surface — but the previously-pending suites are now **executed with real
 pass/fail**, not merely authored.
 
-## Summary (Milestones 1 + 2 + 3)
+## Summary (Milestones 1 + 2 + 3 + 4)
 
 | Metric | Count |
 |---|---:|
-| **Total test cases** | **85** |
-| **Passed** | **85** |
+| **Total test cases** | **100** |
+| **Passed** | **100** |
 | **Failed** | **0** |
 | **Skipped** | **0** |
-| Static analysis (`node --check`) | 36 / 36 files OK |
+| Static analysis (`node --check`) | 44 / 44 files OK |
 
 - Pure-logic: **34 / 34 passed** (`tests/pure_test_output.txt`).
-- GAS suites via mock: **51 / 51 passed** — Schema 7, IdService 5, Validation 6, Repository 6,
-  **Domain 12**, **Planning 5**, **Calendar 10** (connection, idempotent push, no-duplicates, sync/update,
-  missing-detection, recreate, delete, partial-failure, unapproved-week gating, O-1 attendee preservation).
+- GAS suites via mock: **66 / 66 passed** — Schema 8, IdService 5, Validation 6, Repository 6, **Domain 12**,
+  **Planning 5**, **Calendar 10**, **Recovery 4**, **Repurposing 3**, **Performance 3**, **Analytics 2**,
+  **Dashboard 2**.
+- M4 highlights: Execution Score (AN-001), recovery marks calendar `Changed` not auto-push (REC-002),
+  DEFER_CONTENT shifts dates (REC-003), rule-based repurposing + accept (RPS-001/002), performance validation
+  (PERF-001/002), decision-oriented dashboard render (DASH-001), sheet visibility metadata (SCH-008).
 - No skipped or disabled tests.
 - **Milestone 3 approval additionally requires bound-project (real Google Calendar) integration evidence** —
-  procedure + results template in `docs/Calendar_Integration_Test_Plan.md` (I-06). The mock proves logic; the
-  bound-project run proves the real Calendar API.
+  `docs/Calendar_Integration_Test_Plan.md` (I-06). M4 adds no new external API.
 
-## 1. GAS suites via mock — EXECUTED ✅ (51/51)
+## 1. GAS suites via mock — EXECUTED ✅ (66/66)
 
 Runner: `node tests/node/run_gas_suites.js`. Workbook is built + workflows seeded in the mock, then the
 same `TestRunner` suites execute. Captured output: `tests/gas_mock_output.txt`.

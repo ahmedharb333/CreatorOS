@@ -42,6 +42,11 @@ const TestRunner = (function () {
       { suite: 'Domain', cases: (typeof DomainTests_ === 'function') ? DomainTests_() : [] },
       { suite: 'Planning', cases: (typeof PlanningTests_ === 'function') ? PlanningTests_() : [] },
       { suite: 'Calendar', cases: (typeof CalendarTests_ === 'function') ? CalendarTests_() : [] },
+      { suite: 'Recovery', cases: (typeof RecoveryTests_ === 'function') ? RecoveryTests_() : [] },
+      { suite: 'Repurposing', cases: (typeof RepurposingTests_ === 'function') ? RepurposingTests_() : [] },
+      { suite: 'Performance', cases: (typeof PerformanceTests_ === 'function') ? PerformanceTests_() : [] },
+      { suite: 'Analytics', cases: (typeof AnalyticsTests_ === 'function') ? AnalyticsTests_() : [] },
+      { suite: 'Dashboard', cases: (typeof DashboardTests_ === 'function') ? DashboardTests_() : [] },
     ];
   }
 

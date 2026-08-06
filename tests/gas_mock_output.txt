@@ -74,10 +74,35 @@
 [INFO] PlanningService: Weekly plan approved
 [INFO] CalendarService: push batch complete
 [INFO] CalendarService: sync batch complete
-[INFO] TestRunner: Test run complete: 51/51 passed
+[INFO] ContentService: Content created
+[INFO] ContentService: Content created
+[INFO] RecoveryService: Recovery action applied
+[INFO] ContentService: Content created
+[INFO] RecoveryService: Content deferred
+[INFO] ContentService: Content created
+[INFO] RecoveryService: Recovery action applied
+[INFO] ContentService: Content status changed
+[INFO] ContentService: Content created
+[INFO] RepurposingService: Rule-based suggestions created
+[INFO] RepurposingService: Rule-based suggestions created
+[INFO] ContentService: Content created
+[INFO] RepurposingService: Rule-based suggestions created
+[INFO] ContentService: Content created
+[INFO] RepurposingService: Suggestion accepted
+[INFO] ContentService: Content created
+[INFO] PerformanceService: Performance recorded
+[ERROR] PerformanceService: PERFORMANCE validation: [{"field":"Views","reason":"must be >= 0"}]
+[INFO] ContentService: Content created
+[ERROR] PerformanceService: Performance can only be recorded for published content.
+[INFO] ContentService: Content created
+[INFO] PerformanceService: Performance recorded
+[INFO] PerformanceService: Performance recorded
+[INFO] DashboardService: Dashboard refreshed
+[INFO] DashboardService: Dashboard refreshed
+[INFO] TestRunner: Test run complete: 66/66 passed
 INIT: WORKBOOK_READY — CreatorOS workbook initialized.
 CreatorOS Milestone 1 tests
-51 / 51 passed, 0 failed.
+66 / 66 passed, 0 failed.
 
 All green.
 
@@ -85,7 +110,7 @@ All green.
 
 ## Executed run
 
-51 / 51 passed, 0 failed.
+66 / 66 passed, 0 failed.
 
 | Suite | Case | Result | Detail |
 |---|---|---|---|
@@ -96,6 +121,7 @@ All green.
 | Schema | SCH-005 schema version marker set | PASS |  |
 | Schema | SCH-006 protections exist on system sheets | PASS |  |
 | Schema | SCH-007 default workflows loaded (8 workflows) | PASS |  |
+| Schema | SCH-008 every sheet has visibility metadata; creator sheets tagged creator (D4-5) | PASS |  |
 | IdService | ID-001 next() returns PREFIX-000000 format | PASS |  |
 | IdService | ID-002 sequential ids are unique and increasing | PASS |  |
 | IdService | ID-003 reserve() returns a contiguous block | PASS |  |
@@ -140,4 +166,18 @@ All green.
 | Calendar | CAL-008 deleteLinkedEvent removes the event and clears the link | PASS |  |
 | Calendar | CAL-009 unapproved week is not push-eligible | PASS |  |
 | Calendar | CAL-010 O-1: managed update preserves attendees (unmanaged fields) | PASS |  |
+| Recovery | REC-001 scan finds an overdue task | PASS |  |
+| Recovery | REC-002 MANUAL_RESCHEDULE updates due date, marks event Changed, logs | PASS |  |
+| Recovery | REC-003 DEFER_CONTENT shifts publish + open task due dates | PASS |  |
+| Recovery | REC-004 SKIP_TASK skips; CANCEL_CONTENT cancels (no auto-cancel elsewhere) | PASS |  |
+| Repurposing | RPS-001 suggestRuleBased writes mapped derivatives (idempotent) | PASS |  |
+| Repurposing | RPS-002 accept creates linked derivative content | PASS |  |
+| Repurposing | RPS-003 suggestWithAi is disabled until M5 | PASS |  |
+| Performance | PERF-001 record for published content; reject negative metric | PASS |  |
+| Performance | PERF-002 non-published content is rejected without force | PASS |  |
+| Performance | PERF-003 multiple measurements aggregate | PASS |  |
+| Analytics | AN-001 Execution Score = on-time ÷ planned due | PASS |  |
+| Analytics | AN-002 getKpis returns the full metric set | PASS |  |
+| Dashboard | DASH-001 refresh renders DASHBOARD with an Execution Score row | PASS |  |
+| Dashboard | DASH-002 refresh is non-destructive to source and safe when empty-ish | PASS |  |
 

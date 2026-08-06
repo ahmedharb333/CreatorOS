@@ -27,6 +27,11 @@ function buildMenu_() {
     .addItem('Sync Calendar', 'menuSyncCalendar')
     .addItem('Recreate Missing Events', 'menuRecreateMissing')
     .addSeparator()
+    .addItem('Run Recovery', 'menuRunRecovery')
+    .addItem('Suggest Repurposing', 'menuSuggestRepurposing')
+    .addItem('Record Performance', 'menuRecordPerformance')
+    .addItem('Refresh Dashboard', 'menuRefreshDashboard')
+    .addSeparator()
     .addItem('Run Tests', 'menuRunTests')
     .addSeparator()
     .addItem('About CreatorOS', 'menuAbout')
@@ -111,6 +116,46 @@ function eligibleTaskIds_() {
 /** @private Tasks that have a linked event or a pending change. */
 function linkedTaskIds_() {
   return new TaskRepository().getAll().filter(function (t) { return t.Calendar_Event_ID || t.Calendar_Sync_Status === 'Changed'; }).map(function (t) { return t.Task_ID; });
+}
+
+/** Menu: scan for overdue work and show recovery recommendations. */
+function menuRunRecovery() {
+  const cases = RecoveryService.scan();
+  const ui = SpreadsheetApp.getUi();
+  if (!cases.length) { ui.alert('CreatorOS', 'Nothing overdue. You are on track.', ui.ButtonSet.OK); return; }
+  const lines = cases.slice(0, 20).map(function (c) {
+    return '• ' + c.taskName + ' (' + c.priority + ', ' + c.daysOverdue + 'd overdue) → ' + c.recommendedAction;
+  }).join('\n');
+  ui.alert('Recovery — ' + cases.length + ' overdue task(s)', lines + '\n\nApply an action from the recovery flow; the calendar is marked "Changed" and you run Sync Calendar to apply.', ui.ButtonSet.OK);
+}
+
+/** Menu: rule-based repurposing suggestions for a content item. */
+function menuSuggestRepurposing() {
+  const ui = SpreadsheetApp.getUi();
+  const resp = ui.prompt('Suggest Repurposing', 'Enter the Content ID to repurpose (e.g. CNT-000001):', ui.ButtonSet.OK_CANCEL);
+  if (resp.getSelectedButton() !== ui.Button.OK) return;
+  toast_(RepurposingService.suggestRuleBased(resp.getResponseText().trim()).message, 'CreatorOS');
+}
+
+/** Menu: record a performance measurement for a published content item. */
+function menuRecordPerformance() {
+  const ui = SpreadsheetApp.getUi();
+  const idResp = ui.prompt('Record Performance', 'Enter the published Content ID (e.g. CNT-000001):', ui.ButtonSet.OK_CANCEL);
+  if (idResp.getSelectedButton() !== ui.Button.OK) return;
+  const viewsResp = ui.prompt('Record Performance', 'Views (leave blank to skip):', ui.ButtonSet.OK_CANCEL);
+  if (viewsResp.getSelectedButton() !== ui.Button.OK) return;
+  const metrics = {};
+  const v = viewsResp.getResponseText().trim();
+  if (v) metrics.Views = Number(v);
+  toast_(PerformanceService.recordPerformance(idResp.getResponseText().trim(), metrics).message, 'CreatorOS');
+}
+
+/** Menu: recompute + render the Dashboard. */
+function menuRefreshDashboard() {
+  const result = DashboardService.refresh();
+  toast_(result.message, 'CreatorOS');
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEETS.DASHBOARD);
+  if (sheet) SpreadsheetApp.setActiveSheet(sheet);
 }
 
 /** Menu: load the default workflow library. */

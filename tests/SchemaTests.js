@@ -12,7 +12,7 @@ function SchemaTests_() {
         SHEET_ORDER.forEach(function (name) {
           t.truthy(ss.getSheetByName(name), 'sheet missing: ' + name);
         });
-        t.equal(SHEET_ORDER.length, 16, 'expected 16 tabs');
+        t.equal(SHEET_ORDER.length, 17, 'expected 17 tabs (16 + RECOVERY_LOG)');
       },
     },
     {
@@ -73,6 +73,18 @@ function SchemaTests_() {
       fn: function (t) {
         const repo = new WorkflowRepository();
         t.equal(repo.listWorkflowIds().length, 8, 'expected 8 workflows');
+      },
+    },
+    {
+      name: 'SCH-008 every sheet has visibility metadata; creator sheets tagged creator (D4-5)',
+      fn: function (t) {
+        SHEET_ORDER.forEach(function (name) {
+          const v = SCHEMA[name].visibility;
+          t.truthy(v === 'creator' || v === 'system', name + ' missing visibility');
+        });
+        CREATOR_SHEETS.forEach(function (name) { t.equal(SCHEMA[name].visibility, 'creator', name + ' should be creator'); });
+        t.equal(SCHEMA[SHEETS.RECOVERY_LOG].visibility, 'system', 'RECOVERY_LOG should be system');
+        t.equal(SCHEMA[SHEETS.SETUP].visibility, 'system', 'SETUP should be system');
       },
     },
   ];

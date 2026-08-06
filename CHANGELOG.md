@@ -70,3 +70,22 @@ versioning with two tracked numbers: **PRODUCT_VERSION** (`MAJOR.MINOR.PATCH`) a
   plan `docs/Calendar_Integration_Test_Plan.md` (required before M3 approval, I-06).
 - **Docs**: Calendar_Event_Contract approved (O-1..O-4), COMMERCIAL_ROADMAP (Basic/Pro/Team, D-ROADMAP-1),
   ADR-018, DEVIATIONS D-05.
+
+## [Unreleased] — Milestone 4: Recovery & Analytics
+
+- **RecoveryService** (FR-012/013): `scan`/`analyzeTask`/`applyAction` (MANUAL_RESCHEDULE, NEXT_AVAILABLE_SLOT,
+  REDUCE_SCOPE, DEFER_CONTENT, SKIP_TASK, CANCEL_CONTENT, MOVE_LOWER_PRIORITY). **Recover → Changed → Sync**
+  (D4-2, permanent): recovery marks linked events `Changed` and never auto-pushes; content never auto-cancelled.
+- **RECOVERY_LOG** system sheet + `RecoveryLogRepository`: every action logs timestamp/task/action/reason/
+  previous+new schedule/user-initiated/calendar-impact (not creator-facing).
+- **RepurposingService** (FR-014): rule-based derivatives from the approved mappings; accept creates linked
+  content (Source_Content_ID + Repurpose_Group_ID); `suggestWithAi` guarded until M5.
+- **PerformanceService** (FR-015): menu-driven entry; published-only default; multi-measurement; aggregate.
+- **AnalyticsService** (KPI layer) + **DashboardService** (presentation): Performance→Analytics→Dashboard.
+  Flagship **Execution Score** = completed-on-time ÷ planned tasks due (%). Decision-oriented dashboard
+  answering: publishing consistently? keeping commitments? needs attention? work next? (D4-4).
+- **Sheet visibility metadata** (ADR-019 / D4-5): every SCHEMA sheet tagged `visibility: creator|system`
+  (metadata only; no hiding behavior). Creator sheets: HOME/TODAY/IDEAS/CONTENT/DASHBOARD.
+- **Menu**: Run Recovery, Suggest Repurposing, Record Performance, Refresh Dashboard.
+- **Tests**: Recovery 4, Repurposing 3, Performance 3, Analytics 2, Dashboard 2, + Schema visibility (SCH-008).
+  **100/100 green** (34 pure + 66 GAS-mock). Full regression of M1–M3 intact.

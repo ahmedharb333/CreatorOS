@@ -36,9 +36,13 @@ const SHEETS = Object.freeze({
   DASHBOARD: 'DASHBOARD',
   AI_LOG: 'AI_LOG',
   SYSTEM_LOG: 'SYSTEM_LOG',
+  RECOVERY_LOG: 'RECOVERY_LOG',
   CONFIG: 'CONFIG',
   CHANGELOG: 'CHANGELOG',
 });
+
+/** Sheets a creator sees in Creator Mode (ADR-019). Everything else is a system sheet. */
+const CREATOR_SHEETS = Object.freeze([SHEETS.HOME, SHEETS.TODAY, SHEETS.IDEAS, SHEETS.CONTENT, SHEETS.DASHBOARD]);
 
 /** Immutable business-ID prefixes — G1 registry. Format: `XXX-000000`. */
 const ID_PREFIX = Object.freeze({
@@ -54,6 +58,7 @@ const ID_PREFIX = Object.freeze({
   PERFORMANCE: 'PER',
   AI_REQUEST: 'AIR',
   LOG: 'LOG',
+  RECOVERY_LOG: 'RCV',
   CORRELATION: 'COR',
 });
 
@@ -321,6 +326,16 @@ const SCHEMA = Object.freeze({
     validations: { Severity: V.enum(ENUMS.SEVERITY), Resolved: V.bool() },
   },
 
+  [SHEETS.RECOVERY_LOG]: {
+    kind: 'table',
+    idColumn: 'Recovery_Log_ID',
+    idPrefix: ID_PREFIX.RECOVERY_LOG,
+    headers: ['Recovery_Log_ID', 'Timestamp', 'Task_ID', 'Content_ID', 'Action', 'Reason', 'Previous_Due_Date', 'Previous_Scheduled_Start', 'New_Due_Date', 'New_Scheduled_Start', 'User_Initiated', 'Calendar_Impact', 'Notes'],
+    frozenRows: 1,
+    protect: 'all', // internal analytics store — not creator-facing (ADR-019)
+    validations: { User_Initiated: V.bool() },
+  },
+
   [SHEETS.CONFIG]: {
     kind: 'table',
     headers: ['Config_Key', 'Config_Label', 'Config_Value', 'Config_Type', 'Named_Range', 'Notes'],
@@ -367,8 +382,14 @@ const SHEET_ORDER = Object.freeze([
   SHEETS.HOME, SHEETS.SETUP, SHEETS.IDEAS, SHEETS.CONTENT, SHEETS.TASKS,
   SHEETS.WORKFLOWS, SHEETS.WEEKLY_PLAN, SHEETS.TODAY, SHEETS.CALENDAR,
   SHEETS.REPURPOSING, SHEETS.PERFORMANCE, SHEETS.DASHBOARD,
-  SHEETS.AI_LOG, SHEETS.SYSTEM_LOG, SHEETS.CONFIG, SHEETS.CHANGELOG,
+  SHEETS.AI_LOG, SHEETS.SYSTEM_LOG, SHEETS.RECOVERY_LOG, SHEETS.CONFIG, SHEETS.CHANGELOG,
 ]);
+
+// D4-5 / ADR-019: stamp visibility metadata onto every sheet definition. Metadata only —
+// no hiding behavior is implemented yet; a future Creator Mode / Advanced Workspace reads this.
+SHEET_ORDER.forEach(function (name) {
+  if (SCHEMA[name]) SCHEMA[name].visibility = CREATOR_SHEETS.indexOf(name) !== -1 ? 'creator' : 'system';
+});
 
 /** Palette (docs 07, 25): input=blue, formula/lock=gray, header=dark. */
 const COLORS = Object.freeze({

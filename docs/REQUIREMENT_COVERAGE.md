@@ -51,14 +51,21 @@ Apps Script mock) · `Not Started` (later milestone). On-Google run is a recomme
 
 Bound-project procedure + results template: `docs/Calendar_Integration_Test_Plan.md` (INT-CAL-001…012).
 
+## Milestone 4 — Recovery & Analytics (Passed via mock)
+
+| Req | Requirement | Implementation | Test(s) | Status |
+|---|---|---|---|---|
+| FR-012 | Overdue detection surfaced for recovery | `RecoveryService.scan` (+ `TaskService.detectOverdue`) | REC-001 | **Passed** |
+| FR-013 | Recovery workflow (actions + logging; Recover→Changed→Sync) | `RecoveryService.applyAction`, `RecoveryLogRepository` | REC-002..004 | **Passed** |
+| FR-014 | Repurposing (rule-based; AI deferred to M5) | `RepurposingService` | RPS-001..003 | **Passed** |
+| FR-015 | Performance entry (menu-driven; published-only; multi-measurement) | `PerformanceService` | PERF-001..003 | **Passed** |
+| FR-016 | Dashboard (decision-oriented) + KPI layer + **Execution Score** | `AnalyticsService`, `DashboardService` | AN-001/002, DASH-001/002 | **Passed** |
+| — | Sheet visibility metadata (ADR-019 / D4-5) | `Constants.SCHEMA[*].visibility` | SCH-008 | **Passed** |
+
 ## Requirements owned by later milestones (Not Started, by instruction)
 
 | Req | Requirement | Milestone |
 |---|---|---|
-| FR-012 / FR-013 | Overdue detection / recovery workflow | M4 |
-| FR-014 | Repurposing | M4 |
-| FR-015 | Performance entry | M4 |
-| FR-016 | Dashboard | M4 |
 | FR-017 / FR-018 / FR-019 | AI setup / request mgmt / weekly suggestions | M5 |
 | FR-020 | Notifications | M5 |
 | NFR-001 / NFR-002 | Performance limits / partial-failure handling | M3–M4 |
@@ -67,9 +74,9 @@ Bound-project procedure + results template: `docs/Calendar_Integration_Test_Plan
 
 ## Sign-off snapshot
 
-- M1 (foundational) + M2 (core domain) + M3 (calendar) scope: **implemented and executed green via mock.**
-- Executed tests: **34/34 pure-logic**, **51/51 GAS suites via mock**, **36/36 `node --check`** = **85/85**, 0 failed.
-- **M3 approval additionally requires bound-project integration evidence** (`Calendar_Integration_Test_Plan.md`, I-06).
+- M1–M4 scope (foundational, core domain, calendar, recovery & analytics): **implemented and executed green via mock.**
+- Executed tests: **34/34 pure-logic**, **66/66 GAS suites via mock**, **44/44 `node --check`** = **100/100**, 0 failed.
+- **M3 approval additionally requires bound-project integration evidence** (`Calendar_Integration_Test_Plan.md`, I-06). M4 introduces no new external API → no new bound-project gate.
 - On-Google run recommended as final confirmation (I-01, downgraded).
 - Unresolved Critical defects: **0.** Unresolved High defects: **0.**
 - Recommendation: **Milestone 1 approved with corrections applied**; proceed to Milestone 2.

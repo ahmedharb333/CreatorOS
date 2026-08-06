@@ -66,6 +66,7 @@ function alignIdCounters_() {
     [new PerformanceRepository(), ID_PREFIX.PERFORMANCE],
     [new RepurposingRepository(), ID_PREFIX.REPURPOSE],
     [new WeeklyPlanRepository(), ID_PREFIX.WEEK],
+    [new RecoveryLogRepository(), ID_PREFIX.RECOVERY_LOG],
   ];
   pairs.forEach(function (p) {
     try { IdService.ensureAtLeast(p[1], p[0].maxIdSuffix()); } catch (e) { /* sheet may be absent mid-build */ }
