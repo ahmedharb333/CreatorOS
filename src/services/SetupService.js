@@ -114,11 +114,7 @@ const SetupService = (function () {
    */
   function completeSetup() {
     const validation = validateSetup();
-    if (!validation.valid) {
-      const detail = validation.missing.map(function (k) { return k + ' (missing)'; })
-        .concat(validation.errors.map(function (e) { return e.key + ' (' + e.reason + ')'; }));
-      throwSetupError(validation);
-    }
+    if (!validation.valid) throwSetupError(validation);
     mirrorToConfig();
     repo().setValue('ONBOARDING_STATUS', 'Complete');
     LoggerService.info(MODULE, 'Setup completed');

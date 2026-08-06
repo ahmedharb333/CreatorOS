@@ -16,7 +16,6 @@ const ContentService = (function () {
     Scheduled: ['Published'],
   };
   const FINAL = ['Published', 'Cancelled'];
-  const PAUSE_RESUMABLE = ['Backlog', 'Approved', 'In Production', 'Ready', 'Scheduled'];
 
   /** @private */
   function repo() { return new ContentRepository(); }
@@ -106,13 +105,57 @@ const ContentService = (function () {
     } catch (err) { return failFromError(err); }
   }
 
-  /** @private */
+  /**
+   * @private Generic transition rules. Pausing/resuming are NOT allowed here — they go
+   * through pauseContent()/resumeContent() so the resume target is controlled (ADR-016).
+   */
   function isTransitionAllowed(from, to) {
-    if (FINAL.indexOf(from) !== -1) return false;              // Published/Cancelled are terminal
-    if (to === 'Cancelled') return true;                        // cancel from any nonfinal
-    if (to === 'Paused') return PAUSE_RESUMABLE.indexOf(from) !== -1;
-    if (from === 'Paused') return PAUSE_RESUMABLE.indexOf(to) !== -1; // resume
-    return (FORWARD[from] || []).indexOf(to) !== -1;            // normal forward step
+    if (FINAL.indexOf(from) !== -1) return false;     // Published/Cancelled are terminal
+    if (from === 'Paused') return to === 'Cancelled'; // leave Paused only by resuming (or cancel)
+    if (to === 'Paused') return false;                // must use pauseContent()
+    if (to === 'Cancelled') return true;              // cancel from any nonfinal
+    return (FORWARD[from] || []).indexOf(to) !== -1;  // normal forward step
+  }
+
+  /**
+   * Pause content, persisting the status to resume to (ADR-016).
+   * @param {string} id
+   * @returns {Object} ServiceResult
+   */
+  function pauseContent(id) {
+    try {
+      const content = requireContent(id);
+      if (content.Status === 'Paused') {
+        throw appError(ERR.CONTENT_ALREADY_PAUSED, { severity: SEVERITY.WARNING, recordId: id, userMessage: 'This content is already paused.' });
+      }
+      if (FINAL.indexOf(content.Status) !== -1) {
+        throw appError(ERR.CONTENT_STATUS_TRANSITION_INVALID, { severity: SEVERITY.WARNING, recordId: id, userMessage: 'Published or cancelled content cannot be paused.' });
+      }
+      const updated = repo().updateById(id, { Status: 'Paused', Paused_From_Status: content.Status });
+      LoggerService.info(MODULE, 'Content paused', { recordId: id, detail: { from: content.Status } });
+      return ok('CONTENT_PAUSED', 'Content paused (was ' + content.Status + ').', { content: updated });
+    } catch (err) { return failFromError(err); }
+  }
+
+  /**
+   * Resume paused content to its stored prior status only.
+   * @param {string} id
+   * @returns {Object} ServiceResult
+   */
+  function resumeContent(id) {
+    try {
+      const content = requireContent(id);
+      if (content.Status !== 'Paused') {
+        throw appError(ERR.CONTENT_NOT_PAUSED, { severity: SEVERITY.WARNING, recordId: id, userMessage: 'This content is not paused.' });
+      }
+      const target = content.Paused_From_Status;
+      if (!target) {
+        throw appError(ERR.CONTENT_STATUS_TRANSITION_INVALID, { recordId: id, userMessage: 'No prior status is stored to resume to.', suggestedAction: 'Set the content status manually.' });
+      }
+      const updated = repo().updateById(id, { Status: target, Paused_From_Status: '' });
+      LoggerService.info(MODULE, 'Content resumed', { recordId: id, detail: { to: target } });
+      return ok('CONTENT_RESUMED', 'Content resumed to ' + target + '.', { content: updated });
+    } catch (err) { return failFromError(err); }
   }
 
   /**
@@ -151,6 +194,8 @@ const ContentService = (function () {
     updateContent: updateContent,
     selectWorkflow: selectWorkflow,
     changeStatus: changeStatus,
+    pauseContent: pauseContent,
+    resumeContent: resumeContent,
     markPublished: markPublished,
     _isTransitionAllowed: isTransitionAllowed, // exposed for tests
   };

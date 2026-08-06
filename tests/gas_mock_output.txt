@@ -1,9 +1,40 @@
 [INFO] WorkbookService: Workbook build complete
 [INFO] WorkflowSeed: Default workflows loaded
-[INFO] TestRunner: Test run complete: 24/24 passed
+[INFO] SetupService: Settings saved
+[INFO] SetupService: Setup completed
+[INFO] IdeaService: Idea created
+[INFO] ContentService: Content created
+[INFO] IdeaService: Idea converted to content
+[INFO] IdeaService: Idea created
+[INFO] ContentService: Content created
+[INFO] IdeaService: Idea converted to content
+[INFO] IdeaService: Idea created
+[ERROR] IdeaService: Idea IDE-000010 status is Captured
+[INFO] ContentService: Content created
+[INFO] ContentService: Content status changed
+[INFO] ContentService: Content paused
+[INFO] ContentService: Content resumed
+[INFO] ContentService: Content created
+[INFO] ContentService: Content status changed
+[INFO] ContentService: Content status changed
+[INFO] ContentService: Content status changed
+[INFO] ContentService: Content created
+[INFO] TaskService: Tasks generated
+[ERROR] TaskService: 14 tasks exist for CNT-000008
+[INFO] ContentService: Content created
+[INFO] TaskService: Tasks generated
+[INFO] TaskService: Task completed
+[INFO] TaskService: Tasks generated
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] ContentService: Content created
+[INFO] PlanningService: Auto-allocation complete
+[INFO] ContentService: Content created
+[INFO] TestRunner: Test run complete: 41/41 passed
 INIT: WORKBOOK_READY — CreatorOS workbook initialized.
 CreatorOS Milestone 1 tests
-24 / 24 passed, 0 failed.
+41 / 41 passed, 0 failed.
 
 All green.
 
@@ -11,7 +42,7 @@ All green.
 
 ## Executed run
 
-24 / 24 passed, 0 failed.
+41 / 41 passed, 0 failed.
 
 | Suite | Case | Result | Detail |
 |---|---|---|---|
@@ -39,4 +70,21 @@ All green.
 | Repository | REP-004 updateById changes field, keeps id, bumps Updated_At | PASS |  |
 | Repository | REP-005 invalid record rejected with RECORD_VALIDATION_FAILED | PASS |  |
 | Repository | REP-006 workflow steps ordered and complete | PASS |  |
+| Domain | SETUP-001 incomplete setup is invalid with missing keys | PASS |  |
+| Domain | SETUP-002 valid settings save + complete; onboarding Complete | PASS |  |
+| Domain | SETUP-003 invalid capacity rejected | PASS |  |
+| Domain | IDEA-CONV convert derives Objective from goal + Priority from score | PASS |  |
+| Domain | IDEA-CONFIRM underivable conversion requires confirmation, then supplied values work | PASS |  |
+| Domain | IDEA-GUARD captured idea cannot convert | PASS |  |
+| Domain | CNT-TRANS status transition rules (pause/resume excluded) | PASS |  |
+| Domain | CNT-PAUSE pause stores prior status; resume returns only to it | PASS |  |
+| Domain | CNT-PUBDATE scheduling without publish date is rejected | PASS |  |
+| Domain | WF-VALIDATE default workflow validates and matches | PASS |  |
+| Domain | TASK-GEN 14 tasks, backward dates, authoritative dependency graph | PASS |  |
+| Domain | TASK-DEPS-IMMUTABLE closed task dependencies survive regeneration | PASS |  |
+| Planning | CAP-001 utilization sums estimates vs capacity | PASS |  |
+| Planning | CAP-002 warning-level boundaries | PASS |  |
+| Planning | PLN-BUILD builds week record + approval is one-shot | PASS |  |
+| Planning | PLN-ALLOCATE assigns Scheduled_Start/End on work days | PASS |  |
+| Planning | PLN-TODAY sorts tasks into overdue / due-today / blocked | PASS |  |
 

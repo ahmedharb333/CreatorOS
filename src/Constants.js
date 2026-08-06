@@ -103,6 +103,14 @@ const CONFIG_DEFAULTS = Object.freeze([
   { key: 'CONTENT_PILLARS', label: 'Content pillars (comma separated)', value: 'Education, Story, Authority', type: 'text', namedRange: 'CFG_CONTENT_PILLARS' },
   { key: 'WORK_DAYS', label: 'Work days (comma separated)', value: 'Mon, Tue, Wed, Thu, Fri', type: 'text', namedRange: 'CFG_WORK_DAYS' },
   { key: 'MAX_AI_RECOMMENDATIONS', label: 'Max AI recommendations per request', value: 5, type: 'number', namedRange: 'CFG_MAX_AI_RECOMMENDATIONS' },
+  // Idea → content derivation (correction 4). Objective is mapped from the idea's Strategic Goal;
+  // Priority is derived from the idea's computed Priority_Score using these thresholds.
+  { key: 'GOAL_OBJECTIVE_MAP', label: 'Idea goal → content objective map', value: 'Awareness:Reach,Engagement:Engage,Authority:Educate,Leads:Convert,Sales:Monetize,Community:Nurture,Retention:Nurture', type: 'text', namedRange: '' },
+  { key: 'PRIORITY_CRITICAL_MIN', label: 'Content priority Critical when score >=', value: 3.0, type: 'number', namedRange: '' },
+  { key: 'PRIORITY_HIGH_MIN', label: 'Content priority High when score >=', value: 2.0, type: 'number', namedRange: '' },
+  { key: 'PRIORITY_MEDIUM_MIN', label: 'Content priority Medium when score >=', value: 1.0, type: 'number', namedRange: '' },
+  // Planning: minutes per work day used to spread weekly capacity (PlanningService).
+  { key: 'DAILY_START_HOUR', label: 'Work day start hour (0-23)', value: 9, type: 'number', namedRange: '' },
 ]);
 
 /** Script Properties keys (product-level, immutable). */
@@ -148,6 +156,7 @@ const V = {
   bool: () => ({ type: 'boolean' }),
   url: () => ({ type: 'url' }),
   id: (prefix) => ({ type: 'id', prefix }),
+  jsonIds: (prefix) => ({ type: 'json', itemType: 'id', prefix }),
 };
 
 const SCHEMA = Object.freeze({
@@ -189,7 +198,8 @@ const SCHEMA = Object.freeze({
     idColumn: 'Content_ID',
     idPrefix: ID_PREFIX.CONTENT,
     timestamps: { created: META.CREATED_AT, updated: META.UPDATED_AT },
-    headers: ['Content_ID', 'Idea_ID', 'Title', 'Content_Pillar', 'Campaign', 'Primary_Platform', 'Format', 'Objective', 'CTA', 'Priority', 'Status', 'Planned_Publish_Date', 'Actual_Publish_Date', 'Estimated_Hours', 'Actual_Hours', 'Source_Content_ID', 'Repurpose_Group_ID', 'Published_URL', 'Owner', 'Notes', 'Created_At', 'Updated_At'],
+    // Paused_From_Status persists the status to resume to (pause/resume, ADR-016). Appended at end.
+    headers: ['Content_ID', 'Idea_ID', 'Title', 'Content_Pillar', 'Campaign', 'Primary_Platform', 'Format', 'Objective', 'CTA', 'Priority', 'Status', 'Planned_Publish_Date', 'Actual_Publish_Date', 'Estimated_Hours', 'Actual_Hours', 'Source_Content_ID', 'Repurpose_Group_ID', 'Published_URL', 'Owner', 'Notes', 'Created_At', 'Updated_At', 'Paused_From_Status'],
     frozenRows: 1,
     protect: 'headers',
     validations: {
@@ -203,6 +213,7 @@ const SCHEMA = Object.freeze({
       Estimated_Hours: V.numMin(0),
       Actual_Hours: V.numMin(0),
       Published_URL: V.url(),
+      Paused_From_Status: V.enum(ENUMS.CONTENT_STATUS),
     },
   },
 
@@ -211,7 +222,10 @@ const SCHEMA = Object.freeze({
     idColumn: 'Task_ID',
     idPrefix: ID_PREFIX.TASK,
     timestamps: { created: META.CREATED_AT, updated: META.UPDATED_AT },
-    headers: ['Task_ID', 'Content_ID', 'Task_Name', 'Task_Type', 'Sequence', 'Dependency_Task_ID', 'Priority', 'Status', 'Estimated_Minutes', 'Scheduled_Start', 'Scheduled_End', 'Due_Date', 'Completed_At', 'Calendar_Event_ID', 'Calendar_Sync_Status', 'Recovery_Status', 'Blocked_Reason', 'Notes', 'Created_At', 'Updated_At'],
+    // Dependency_Task_IDs (JSON array) is the AUTHORITATIVE dependency graph (ADR-011);
+    // Dependency_Task_ID keeps the primary/latest predecessor for display/back-compat.
+    // Appended at the end so any additive upgrade is column-order-safe.
+    headers: ['Task_ID', 'Content_ID', 'Task_Name', 'Task_Type', 'Sequence', 'Dependency_Task_ID', 'Priority', 'Status', 'Estimated_Minutes', 'Scheduled_Start', 'Scheduled_End', 'Due_Date', 'Completed_At', 'Calendar_Event_ID', 'Calendar_Sync_Status', 'Recovery_Status', 'Blocked_Reason', 'Notes', 'Created_At', 'Updated_At', 'Dependency_Task_IDs'],
     frozenRows: 1,
     protect: 'headers',
     validations: {
@@ -221,6 +235,7 @@ const SCHEMA = Object.freeze({
       Estimated_Minutes: V.intRange(5, 1440),
       Calendar_Sync_Status: V.enum(ENUMS.CALENDAR_SYNC),
       Recovery_Status: V.enum(ENUMS.RECOVERY_STATUS),
+      Dependency_Task_IDs: V.jsonIds(ID_PREFIX.TASK),
     },
   },
 

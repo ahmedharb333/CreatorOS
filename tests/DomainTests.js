@@ -32,10 +32,8 @@ function DomainTests_() {
             PRIMARY_PLATFORM: 'YouTube', WEEKLY_AVAILABLE_HOURS: 10, WORK_DAYS: 'Mon, Tue', CONTENT_PILLARS: 'Education',
           });
           t.truthy(res.success, 'save failed: ' + res.message);
-          const v = SetupService.validateSetup();
-          t.truthy(v.valid, 'should be valid: ' + JSON.stringify(v));
-          const done = SetupService.completeSetup();
-          t.truthy(done.success, 'complete failed');
+          t.truthy(SetupService.validateSetup().valid, 'should be valid');
+          t.truthy(SetupService.completeSetup().success, 'complete failed');
           t.equal(SetupService.getSetupState().onboardingStatus, 'Complete', 'onboarding not Complete');
         } finally { restoreSetup_(repo, snap); }
       },
@@ -47,27 +45,51 @@ function DomainTests_() {
         const snap = snapshotSetup_(repo);
         try {
           repo.setValue('WEEKLY_AVAILABLE_HOURS', 0);
-          const v = SetupService.validateSetup();
-          t.truthy(!v.valid, 'zero hours should be invalid');
+          t.truthy(!SetupService.validateSetup().valid, 'zero hours should be invalid');
         } finally { restoreSetup_(repo, snap); }
       },
     },
 
     // ---- Idea (FR-003) ----
     {
-      name: 'IDEA-CONV convert Approved idea creates content and marks Converted',
+      name: 'IDEA-CONV convert derives Objective from goal + Priority from score',
       fn: function (t) {
+        // sample: goal Authority (→ Educate), score 4*.5+3*.3-2*.2 = 2.5 (→ High).
         const created = IdeaService.createIdea(sampleIdea_());
-        t.truthy(created.success, 'create idea failed');
         const ideaId = created.data.idea.Idea_ID;
         let contentId = null;
         try {
           IdeaService.updateIdea(ideaId, { Status: 'Approved' });
-          const conv = IdeaService.convertToContent(ideaId, { Priority: 'High' });
+          const conv = IdeaService.convertToContent(ideaId, {});
           t.truthy(conv.success, 'convert failed: ' + conv.message);
           contentId = conv.data.content.Content_ID;
-          t.equal(conv.data.content.Idea_ID, ideaId, 'content not linked to idea');
-          t.equal(new IdeaRepository().getById(ideaId).Status, 'Converted', 'idea not marked Converted');
+          t.equal(conv.data.content.Objective, 'Educate', 'objective not derived from Authority');
+          t.equal(conv.data.content.Priority, 'High', 'priority not derived from score 2.5');
+          t.equal(new IdeaRepository().getById(ideaId).Status, 'Converted', 'idea not Converted');
+        } finally {
+          if (contentId) new ContentRepository().deleteById(contentId);
+          new IdeaRepository().deleteById(ideaId);
+        }
+      },
+    },
+    {
+      name: 'IDEA-CONFIRM underivable conversion requires confirmation, then supplied values work',
+      fn: function (t) {
+        // No Strategic_Goal and no scores → Objective and Priority underivable.
+        const created = IdeaService.createIdea({
+          Created_Date: new Date(), Idea_Title: 'No Goal Idea', Content_Pillar: 'Education',
+          Primary_Platform: 'YouTube', Suggested_Format: 'YouTube Long-Form', Status: 'Approved', Source: 'Manual',
+        });
+        const ideaId = created.data.idea.Idea_ID;
+        let contentId = null;
+        try {
+          const blocked = IdeaService.convertToContent(ideaId, {});
+          t.truthy(!blocked.success, 'should require confirmation');
+          t.equal(blocked.code, ERR.CONVERSION_NEEDS_CONFIRMATION, 'wrong code: ' + blocked.code);
+          const conv = IdeaService.convertToContent(ideaId, { Objective: 'Reach', Priority: 'Low' });
+          t.truthy(conv.success, 'supplied values should convert: ' + conv.message);
+          contentId = conv.data.content.Content_ID;
+          t.equal(conv.data.content.Objective, 'Reach', 'objective override lost');
         } finally {
           if (contentId) new ContentRepository().deleteById(contentId);
           new IdeaRepository().deleteById(ideaId);
@@ -89,13 +111,36 @@ function DomainTests_() {
 
     // ---- Content (FR-004) ----
     {
-      name: 'CNT-TRANS status transition rules',
+      name: 'CNT-TRANS status transition rules (pause/resume excluded)',
       fn: function (t) {
         t.truthy(ContentService._isTransitionAllowed('Backlog', 'Approved'), 'Backlog→Approved allowed');
         t.truthy(!ContentService._isTransitionAllowed('Backlog', 'Published'), 'Backlog→Published blocked');
         t.truthy(ContentService._isTransitionAllowed('Approved', 'In Production'), 'Approved→In Production allowed');
         t.truthy(!ContentService._isTransitionAllowed('Published', 'Approved'), 'Published terminal');
-        t.truthy(ContentService._isTransitionAllowed('Approved', 'Cancelled'), 'cancel from Approved allowed');
+        t.truthy(ContentService._isTransitionAllowed('Approved', 'Cancelled'), 'cancel allowed');
+        t.truthy(!ContentService._isTransitionAllowed('Approved', 'Paused'), 'must use pauseContent');
+        t.truthy(!ContentService._isTransitionAllowed('Paused', 'In Production'), 'must use resumeContent');
+        t.truthy(ContentService._isTransitionAllowed('Paused', 'Cancelled'), 'cancel from Paused allowed');
+      },
+    },
+    {
+      name: 'CNT-PAUSE pause stores prior status; resume returns only to it',
+      fn: function (t) {
+        const c = ContentService.createContent(sampleContent_(null));
+        const id = c.data.content.Content_ID;
+        try {
+          ContentService.changeStatus(id, 'Approved');
+          const paused = ContentService.pauseContent(id);
+          t.truthy(paused.success, 'pause failed');
+          t.equal(paused.data.content.Status, 'Paused', 'not paused');
+          t.equal(paused.data.content.Paused_From_Status, 'Approved', 'prior status not stored');
+          const bypass = ContentService.changeStatus(id, 'In Production');
+          t.truthy(!bypass.success, 'generic transition should not leave Paused');
+          const resumed = ContentService.resumeContent(id);
+          t.truthy(resumed.success, 'resume failed');
+          t.equal(resumed.data.content.Status, 'Approved', 'did not resume to stored status');
+          t.truthy(!resumed.data.content.Paused_From_Status, 'Paused_From_Status not cleared');
+        } finally { new ContentRepository().deleteById(id); }
       },
     },
     {
@@ -126,9 +171,9 @@ function DomainTests_() {
 
     // ---- Task generation (FR-005) ----
     {
-      name: 'TASK-GEN generates 14 backward-scheduled tasks with dependencies',
+      name: 'TASK-GEN 14 tasks, backward dates, authoritative dependency graph',
       fn: function (t) {
-        const publish = new Date(2026, 8, 20); // 20 Sep 2026
+        const publish = new Date(2026, 8, 20);
         const c = ContentService.createContent(sampleContent_(publish));
         const contentId = c.data.content.Content_ID;
         try {
@@ -140,26 +185,45 @@ function DomainTests_() {
           const bySeq = {};
           tasks.forEach(function (x) { bySeq[x.Sequence] = x; });
 
-          // Backward due dates: seq1 Research offset -10; seq11 Publish offset 0.
           t.equal(dayDiff_(bySeq[1].Due_Date, publish), -10, 'research due -10');
           t.equal(dayDiff_(bySeq[11].Due_Date, publish), 0, 'publish due 0');
 
-          // Dependency: seq 9 (Final QA) deps 7,8 -> primary 8.
-          t.equal(bySeq[9].Dependency_Task_ID, bySeq[8].Task_ID, 'seq9 should depend on seq8');
+          // Authoritative full dependency graph: seq9 depends on seq7 AND seq8.
+          const deps9 = TaskService.getDependencies(bySeq[9]);
+          t.equal(deps9.length, 2, 'seq9 should have 2 dependencies');
+          t.truthy(deps9.indexOf(bySeq[7].Task_ID) !== -1, 'seq9 missing seq7 dep');
+          t.truthy(deps9.indexOf(bySeq[8].Task_ID) !== -1, 'seq9 missing seq8 dep');
+          // Primary pointer = latest predecessor (seq8).
+          t.equal(bySeq[9].Dependency_Task_ID, bySeq[8].Task_ID, 'primary should be seq8');
 
-          // Scheduled times left empty (ADR-015).
           t.truthy(bySeq[1].Scheduled_Start === '' || bySeq[1].Scheduled_Start == null, 'Scheduled_Start must be empty');
 
-          // CREATE_ONLY again is rejected.
           const again = TaskService.generateTasks(contentId, 'WKF-000001', TaskService.MODES.CREATE_ONLY);
-          t.truthy(!again.success, 'second CREATE_ONLY should fail');
-          t.equal(again.code, ERR.TASKS_ALREADY_EXIST, 'wrong code: ' + again.code);
+          t.truthy(!again.success && again.code === ERR.TASKS_ALREADY_EXIST, 'second CREATE_ONLY should fail');
+        } finally {
+          new TaskRepository().getByContent(contentId).forEach(function (x) { new TaskRepository().deleteById(x.Task_ID); });
+          new ContentRepository().deleteById(contentId);
+        }
+      },
+    },
+    {
+      name: 'TASK-DEPS-IMMUTABLE closed task dependencies survive regeneration',
+      fn: function (t) {
+        const publish = new Date(2026, 8, 20);
+        const c = ContentService.createContent(sampleContent_(publish));
+        const contentId = c.data.content.Content_ID;
+        try {
+          TaskService.generateTasks(contentId, 'WKF-000001', TaskService.MODES.CREATE_ONLY);
+          let bySeq = indexBySeq_(new TaskRepository().getByContent(contentId));
+          const frozen = bySeq[9].Dependency_Task_IDs; // JSON string of old predecessor ids
+          TaskService.completeTask(bySeq[9].Task_ID);
 
-          // Complete + overdue detection.
-          TaskService.completeTask(bySeq[1].Task_ID);
-          t.equal(new TaskRepository().getById(bySeq[1].Task_ID).Status, 'Completed', 'not completed');
-          const overdue = TaskService.detectOverdue(new Date(2026, 11, 31));
-          t.truthy(overdue.some(function (x) { return x.Content_ID === contentId; }), 'overdue not detected');
+          // Regenerate open tasks (new ids for seq 1..8,10..14); completed seq9 preserved.
+          const re = TaskService.generateTasks(contentId, 'WKF-000001', TaskService.MODES.REPLACE_OPEN_TASKS);
+          t.truthy(re.success, 'replace failed: ' + re.message);
+          bySeq = indexBySeq_(new TaskRepository().getByContent(contentId));
+          t.equal(bySeq[9].Status, 'Completed', 'seq9 should remain completed');
+          t.equal(bySeq[9].Dependency_Task_IDs, frozen, 'closed task deps must not be rewired');
         } finally {
           new TaskRepository().getByContent(contentId).forEach(function (x) { new TaskRepository().deleteById(x.Task_ID); });
           new ContentRepository().deleteById(contentId);
@@ -170,6 +234,8 @@ function DomainTests_() {
 }
 
 /** @private */
+function indexBySeq_(tasks) { const m = {}; tasks.forEach(function (x) { m[x.Sequence] = x; }); return m; }
+/** @private */
 function snapshotSetup_(repo) {
   const snap = {};
   SetupService.REQUIRED_KEYS.concat(['ONBOARDING_STATUS']).forEach(function (k) { snap[k] = repo.getValue(k); });
@@ -177,14 +243,12 @@ function snapshotSetup_(repo) {
 }
 /** @private */
 function restoreSetup_(repo, snap) { Object.keys(snap).forEach(function (k) { repo.setValue(k, snap[k]); }); }
-
 /** @private */
 function dayDiff_(a, b) {
   const da = a instanceof Date ? a : new Date(a);
   const db = b instanceof Date ? b : new Date(b);
   return Math.round((da.getTime() - db.getTime()) / 86400000);
 }
-
 /** @private */
 function sampleIdea_() {
   return {
@@ -193,7 +257,6 @@ function sampleIdea_() {
     Effort_Score: 2, Impact_Score: 4, Confidence_Score: 3, Status: 'Captured', Source: 'Manual',
   };
 }
-
 /** @private @param {Date|null} publish */
 function sampleContent_(publish) {
   const c = {

@@ -57,6 +57,19 @@ const ValidationService = (function () {
         return IdService.validate(String(value), spec.prefix)
           ? { valid: true } : { valid: false, reason: 'must be a valid ' + (spec.prefix || '') + ' id' };
 
+      case 'json': {
+        if (empty) return { valid: true };
+        let arr;
+        try { arr = JSON.parse(value); } catch (e) { return { valid: false, reason: 'must be valid JSON' }; }
+        if (!Array.isArray(arr)) return { valid: false, reason: 'must be a JSON array' };
+        if (spec.itemType === 'id') {
+          for (let i = 0; i < arr.length; i++) {
+            if (!IdService.validate(String(arr[i]), spec.prefix)) return { valid: false, reason: 'contains an invalid ' + (spec.prefix || '') + ' id' };
+          }
+        }
+        return { valid: true };
+      }
+
       default:
         return { valid: true };
     }

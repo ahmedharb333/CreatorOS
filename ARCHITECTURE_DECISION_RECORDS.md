@@ -121,5 +121,22 @@ so a future HTML onboarding wizard can reuse them without backend changes. No wi
 assigning work-block times and calendar placement belongs to `PlanningService` (M2 planning increment) and
 `CalendarService` (M3). Schema fields exist now but stay unpopulated.
 **Consequences:** Clean separation; generation is idempotent per mode (CREATE_ONLY / APPEND_MISSING /
-REPLACE_OPEN_TASKS) and never replaces completed tasks. Task `Dependency_Task_ID` stores the primary
-(latest) predecessor; due-date offsets already encode the full ordering.
+REPLACE_OPEN_TASKS) and never replaces completed tasks. **Update:** `PlanningService.autoAllocate` now
+implements the scheduled-time assignment (work-day spread); calendar placement remains M3.
+
+## ADR-016 — Controlled pause/resume for content (Milestone 2 correction)
+**Context:** Generic status transitions let Paused content jump to any forward state, losing where it paused.
+**Decision (approved):** Add a persisted `Paused_From_Status` column and explicit `pauseContent(id)` /
+`resumeContent(id)` methods. Pause stores the current status; resume returns content **only** to that stored
+status. The generic `changeStatus` cannot enter or leave `Paused` (except cancel), so it can't bypass the rule.
+**Consequences:** Predictable resume; one extra column. Errors `CONTENT_ALREADY_PAUSED` / `CONTENT_NOT_PAUSED`.
+
+## ADR-017 — TASKS authoritative multi-dependency (`Dependency_Task_IDs`) (Milestone 2 correction)
+**Context:** A single `Dependency_Task_ID` pointer is lossy; workflows are multi-dependency (ADR-011), and the
+planner/calendar may need the full predecessor set.
+**Decision (approved):** Add `Dependency_Task_IDs` (JSON array of predecessor Task IDs) as the **authoritative**
+dependency graph. `Dependency_Task_ID` is kept as the primary/latest predecessor for display/back-compat.
+`wireDependencies` writes both, only for new/open tasks — **closed tasks are never rewired** (their dependency
+history is immutable unless an explicit repair/migration runs).
+**Consequences:** Full dependency fidelity for scheduling. New JSON validation type. Additive column
+(appended at end, order-safe); schema stays version 1 (un-deployed, no migration — see DEVIATIONS D-04).

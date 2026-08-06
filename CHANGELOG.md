@@ -36,3 +36,23 @@ versioning with two tracked numbers: **PRODUCT_VERSION** (`MAJOR.MINOR.PATCH`) a
   `parseDependencies()` added; YouTube long-form Final QA stores `"7,8"`; G3 resolved, D-03 recorded, ADR-011.
 - **ADRs** (correction 5): `ARCHITECTURE_DECISION_RECORDS.md` added (ADR-001…013).
 - `.claspignore` excludes `tests/node/**` (Node-only harness not pushed to Apps Script).
+
+## [Unreleased] — Milestone 2: Core domain
+
+- **SetupService** (FR-001): sheet-driven validate/save/complete/rerun; CONFIG mirroring; records preserved (ADR-014).
+- **IdeaService** (FR-003): create/update/score/archive; convert derives Objective from Strategic Goal and
+  Priority from Priority_Score (CONFIG map + thresholds), requiring confirmation when underivable — no arbitrary defaults.
+- **ContentService** (FR-004): create/update/selectWorkflow/changeStatus; **pauseContent/resumeContent** with
+  persisted `Paused_From_Status`; generic transitions cannot bypass pause/resume (ADR-016).
+- **WorkflowService** (FR-004): find/getSteps/validate/clone.
+- **TaskService** (FR-005): generateTasks (3 modes, backward due dates); **authoritative `Dependency_Task_IDs`
+  JSON graph** + primary `Dependency_Task_ID`; dependency rewiring scoped to new/open tasks only (ADR-017).
+- **CapacityService** (FR-006): utilization + warning levels (Normal/Watch/Overloaded/Critical).
+- **PlanningService** (FR-007/008): buildWeeklyPlan/approveWeeklyPlan; **autoAllocate** assigns
+  Scheduled_Start/End across work days (ADR-015); getTodayPlan/renderTodayView (priority-ordered Today).
+- **Schema**: added `TASKS.Dependency_Task_IDs` (JSON) and `CONTENT.Paused_From_Status` (appended, order-safe;
+  additive, schema stays v1 — DEVIATIONS D-04); new `json` validation type; CONFIG keys for goal→objective map,
+  priority thresholds, daily start hour.
+- **Menu**: Complete Setup, Reopen Setup, Build Weekly Plan, Open Today.
+- **Tests**: Domain (12) + Planning (5) suites added. Executed **75/75 green** (34 pure + 41 GAS-mock).
+  Fixed two `Sequence` vs `Task_Sequence` field bugs (dependency wiring + mode filter), now regression-covered.

@@ -29,17 +29,22 @@ Apps Script mock) · `Not Started` (later milestone). On-Google run is a recomme
 | NFR-006 | Copy portability; idempotent init | `WorkbookService.build` (idempotent), `alignIdCounters_` | mock init + `verify()`; full copy-install in M6 | **Passed** (mock) |
 | NFR-008 | Data integrity: immutable ids, safe re-run | repositories; counter floor; seed-if-empty | REP-004 (id immutable, mock) | **Passed** |
 
+## Milestone 2 — core domain (Passed via mock; on-Google confirmation recommended)
+
+| Req | Requirement | Implementation | Test(s) | Status |
+|---|---|---|---|---|
+| FR-001 | Guided setup (validate/save/complete/rerun, records preserved) | `SetupService` (sheet-driven, ADR-014) | SETUP-001..003 | **Passed** |
+| FR-003 | Idea capture, scoring, convert-to-content | `IdeaService` (derived Objective/Priority, confirmation) | IDEA-CONV, IDEA-CONFIRM, IDEA-GUARD | **Passed** |
+| FR-004 | Content creation, status transitions, pause/resume, workflow match | `ContentService` (ADR-016), `WorkflowService` | CNT-TRANS, CNT-PAUSE, CNT-PUBDATE, WF-VALIDATE | **Passed** |
+| FR-005 | Task generation (backward dates, modes, authoritative deps) | `TaskService` (ADR-015, ADR-017) | TASK-GEN, TASK-DEPS-IMMUTABLE | **Passed** |
+| FR-006 | Capacity calculation + warning levels | `CapacityService` | CAP-001, CAP-002 | **Passed** |
+| FR-007 | Weekly planning (build/approve) + auto-allocation | `PlanningService` | PLN-BUILD, PLN-ALLOCATE | **Passed** |
+| FR-008 | Today view (priority order) | `PlanningService.getTodayPlan/renderTodayView` | PLN-TODAY (+ render smoke) | **Passed** |
+
 ## Requirements owned by later milestones (Not Started, by instruction)
 
 | Req | Requirement | Milestone |
 |---|---|---|
-| FR-001 | Guided setup | M2 |
-| FR-003 (full) | Idea capture & scoring service flow, convert-to-content | M2 |
-| FR-004 | Content creation | M2 |
-| FR-005 | Task generation (backward scheduling, generation modes) | M2 |
-| FR-006 | Capacity calculation | M2 |
-| FR-007 | Weekly planning | M2 |
-| FR-008 | Today view | M2 |
 | FR-009 / FR-010 / FR-011 | Calendar connection / event creation / updates | M3 |
 | FR-012 / FR-013 | Overdue detection / recovery workflow | M4 |
 | FR-014 | Repurposing | M4 |
@@ -53,8 +58,8 @@ Apps Script mock) · `Not Started` (later milestone). On-Google run is a recomme
 
 ## Sign-off snapshot
 
-- Foundational scope: **100% implemented and executed green.**
-- Executed tests: **34/34 pure-logic**, **24/24 GAS suites via mock**, **27/27 `node --check`** = **58/58**, 0 failed.
+- Foundational (M1) + core-domain (M2) scope: **100% implemented and executed green.**
+- Executed tests: **34/34 pure-logic**, **41/41 GAS suites via mock**, **34/34 `node --check`** = **75/75**, 0 failed.
 - On-Google run recommended as final confirmation (I-01, downgraded).
 - Unresolved Critical defects: **0.** Unresolved High defects: **0.**
 - Recommendation: **Milestone 1 approved with corrections applied**; proceed to Milestone 2.

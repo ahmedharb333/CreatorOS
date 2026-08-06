@@ -83,16 +83,33 @@ const IdeaService = (function () {
         });
       }
 
+      // Derive Objective from the idea's Strategic Goal and Priority from its Priority_Score
+      // (correction 4). No arbitrary defaults — if either cannot be derived and is not supplied,
+      // require user confirmation rather than silently assigning a value.
+      SpreadsheetApp.flush();
+      const fresh = repo().getById(id); // ensure Priority_Score formula is computed
+      const ov = cleanOverrides(overrides);
+      const objective = ov.Objective || mapGoalToObjective(fresh.Strategic_Goal);
+      const priority = ov.Priority || derivePriority(fresh.Priority_Score);
+      const missing = [];
+      if (!objective) missing.push('Objective');
+      if (!priority) missing.push('Priority');
+      if (missing.length) {
+        return fail(ERR.CONVERSION_NEEDS_CONFIRMATION,
+          'Cannot derive ' + missing.join(' and ') + ' from this idea. Supply ' + missing.join(' and ') + ' to convert.',
+          { ideaId: id, missing: missing, derivedObjective: objective, derivedPriority: priority });
+      }
+
       const contentInput = Object.assign({
-        Idea_ID: idea.Idea_ID,
-        Title: idea.Idea_Title,
-        Content_Pillar: idea.Content_Pillar,
-        Primary_Platform: idea.Primary_Platform,
-        Format: idea.Suggested_Format,
-        Objective: 'Reach',
-        Priority: 'Medium',
+        Idea_ID: fresh.Idea_ID,
+        Title: fresh.Idea_Title,
+        Content_Pillar: fresh.Content_Pillar,
+        Primary_Platform: fresh.Primary_Platform,
+        Format: fresh.Suggested_Format,
+        Objective: objective,
+        Priority: priority,
         Status: 'Backlog',
-      }, cleanOverrides(overrides));
+      }, ov);
 
       const created = ContentService.createContent(contentInput);
       if (!created.success) return created;
@@ -111,7 +128,40 @@ const IdeaService = (function () {
     if (!overrides) return {};
     const o = Object.assign({}, overrides);
     delete o.force;
+    delete o.confirm;
     return o;
+  }
+
+  /**
+   * @private Map an idea's Strategic Goal to a content Objective via the CONFIG map.
+   * @param {string} goal one of ENUMS.STRATEGIC_GOAL
+   * @returns {string|null} a valid CONTENT_OBJECTIVE, or null if unmappable
+   */
+  function mapGoalToObjective(goal) {
+    if (!goal) return null;
+    const raw = ConfigService.get('GOAL_OBJECTIVE_MAP', '');
+    const map = {};
+    String(raw).split(',').forEach(function (pair) {
+      const kv = pair.split(':');
+      if (kv.length === 2) map[kv[0].trim()] = kv[1].trim();
+    });
+    const obj = map[goal];
+    return (obj && ENUMS.CONTENT_OBJECTIVE.indexOf(obj) !== -1) ? obj : null;
+  }
+
+  /**
+   * @private Derive a content Priority from an idea's Priority_Score using CONFIG thresholds.
+   * @param {number|string} score
+   * @returns {string|null} Low/Medium/High/Critical, or null if the score is not a number
+   */
+  function derivePriority(score) {
+    if (score === '' || score == null) return null;
+    const n = Number(score);
+    if (isNaN(n)) return null;
+    if (n >= ConfigService.get('PRIORITY_CRITICAL_MIN', 3.0)) return 'Critical';
+    if (n >= ConfigService.get('PRIORITY_HIGH_MIN', 2.0)) return 'High';
+    if (n >= ConfigService.get('PRIORITY_MEDIUM_MIN', 1.0)) return 'Medium';
+    return 'Low';
   }
 
   /**

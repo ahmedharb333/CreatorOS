@@ -19,6 +19,9 @@ function buildMenu_() {
     .addItem('Complete Setup', 'menuCompleteSetup')
     .addItem('Reopen Setup', 'menuReopenSetup')
     .addSeparator()
+    .addItem('Build Weekly Plan', 'menuBuildWeeklyPlan')
+    .addItem('Open Today', 'menuOpenToday')
+    .addSeparator()
     .addItem('Run Tests', 'menuRunTests')
     .addSeparator()
     .addItem('About CreatorOS', 'menuAbout')
@@ -51,6 +54,19 @@ function menuCompleteSetup() {
 function menuReopenSetup() {
   const result = SetupService.rerunSetup();
   toast_(result.message, 'CreatorOS');
+}
+
+/** Menu: build the weekly plan for the current week. */
+function menuBuildWeeklyPlan() {
+  const result = PlanningService.buildWeeklyPlan(new Date());
+  toast_(result.message, 'CreatorOS');
+}
+
+/** Menu: render + focus the Today view. */
+function menuOpenToday() {
+  PlanningService.renderTodayView(new Date());
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEETS.TODAY);
+  if (sheet) SpreadsheetApp.setActiveSheet(sheet);
 }
 
 /** Menu: load the default workflow library. */

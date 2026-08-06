@@ -40,6 +40,7 @@ const TestRunner = (function () {
       { suite: 'Validation', cases: ValidationTests_() },
       { suite: 'Repository', cases: RepositoryTests_() },
       { suite: 'Domain', cases: (typeof DomainTests_ === 'function') ? DomainTests_() : [] },
+      { suite: 'Planning', cases: (typeof PlanningTests_ === 'function') ? PlanningTests_() : [] },
     ];
   }
 

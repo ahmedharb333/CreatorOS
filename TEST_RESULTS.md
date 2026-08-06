@@ -17,21 +17,23 @@ protections, Script/User properties, LockService. It is not the real Google engi
 remains the final acceptance surface — but the previously-pending suites are now **executed with real
 pass/fail**, not merely authored.
 
-## Summary
+## Summary (Milestones 1 + 2)
 
 | Metric | Count |
 |---|---:|
-| **Total test cases** | **58** |
-| **Passed** | **58** |
+| **Total test cases** | **75** |
+| **Passed** | **75** |
 | **Failed** | **0** |
 | **Skipped** | **0** |
-| Static analysis (`node --check`) | 27 / 27 files OK |
+| Static analysis (`node --check`) | 31 / 31 files OK |
 
 - Pure-logic: **34 / 34 passed** (`tests/pure_test_output.txt`).
-- GAS suites via mock: **24 / 24 passed** (`tests/gas_mock_output.txt`).
-- No skipped or disabled tests.
+- GAS suites via mock: **41 / 41 passed** — Schema 7, IdService 5, Validation 6, Repository 6,
+  **Domain 12** (Setup/Idea/Content/Workflow/Task, incl. pause/resume, derived conversion, authoritative
+  dependency graph, closed-task immutability), **Planning 5** (Capacity/WeeklyPlan/AutoAllocate/Today).
+- No skipped or disabled tests. On-Google run remains the recommended final confirmation (I-01).
 
-## 1. GAS suites via mock — EXECUTED ✅ (24/24)
+## 1. GAS suites via mock — EXECUTED ✅ (41/41)
 
 Runner: `node tests/node/run_gas_suites.js`. Workbook is built + workflows seeded in the mock, then the
 same `TestRunner` suites execute. Captured output: `tests/gas_mock_output.txt`.
@@ -113,4 +115,5 @@ final confirmation on the real Sheets engine; the logic is already executed gree
 | No API key exposure | required | met (design + sanitize verified) |
 | No duplicate calendar events | required | N/A this milestone (calendar in M3) |
 
-**Milestone 1: 58/58 executed green.** On-Google run recommended as final confirmation (no longer a gap).
+**Milestones 1 + 2: 75/75 executed green** (34 pure + 41 GAS-mock). Full per-case output incl. the Domain
+and Planning suites is captured in `tests/gas_mock_output.txt`. On-Google run recommended as final confirmation.

@@ -24,12 +24,12 @@ const srcFiles = [
   'repositories/TaskRepository.js', 'repositories/WorkflowRepository.js', 'repositories/PerformanceRepository.js',
   'repositories/RepurposingRepository.js', 'repositories/WeeklyPlanRepository.js', 'repositories/SettingsRepository.js',
   'services/SetupService.js', 'services/IdeaService.js', 'services/ContentService.js',
-  'services/WorkflowService.js', 'services/TaskService.js',
+  'services/WorkflowService.js', 'services/TaskService.js', 'services/CapacityService.js', 'services/PlanningService.js',
   'WorkbookService.js', 'WorkflowSeed.js', 'Menu.js', 'Main.js',
 ].map(function (f) { return path.join(SRC, f); });
 
 const testFiles = [
-  'TestRunner.js', 'SchemaTests.js', 'IdTests.js', 'ValidationTests.js', 'RepositoryTests.js', 'DomainTests.js',
+  'TestRunner.js', 'SchemaTests.js', 'IdTests.js', 'ValidationTests.js', 'RepositoryTests.js', 'DomainTests.js', 'PlanningTests.js',
 ].map(function (f) { return path.join(TESTS, f); });
 
 let code = '';

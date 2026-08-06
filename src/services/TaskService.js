@@ -74,7 +74,7 @@ const TaskService = (function () {
       }
 
       const existingSeqs = {};
-      existing.forEach(function (t) { existingSeqs[t.Task_Sequence] = t; });
+      existing.forEach(function (t) { existingSeqs[t.Sequence] = t; }); // TASKS use `Sequence`, not `Task_Sequence`
 
       // Which steps to create.
       const toCreate = steps.filter(function (s) {
@@ -115,25 +115,45 @@ const TaskService = (function () {
     }
   }
 
-  /** @private Set each task's Dependency_Task_ID from the workflow's Dependency_Sequences. */
+  /**
+   * @private Set each task's dependencies from the workflow's Dependency_Sequences.
+   * `Dependency_Task_IDs` (JSON array) is authoritative (ADR-011); `Dependency_Task_ID`
+   * keeps the primary (latest) predecessor for display/back-compat. Closed tasks are
+   * never recalculated (correction 3) — their dependency history is immutable here.
+   */
   function wireDependencies(repo, contentId, steps) {
     const tasks = repo.getByContent(contentId);
     const seqToId = {};
-    // NOTE: a TASKS record's sequence column is `Sequence`; a WORKFLOWS step's is `Task_Sequence`.
+    // A TASKS record's sequence column is `Sequence`; a WORKFLOWS step's is `Task_Sequence`.
     tasks.forEach(function (t) { seqToId[t.Sequence] = t.Task_ID; });
     const stepBySeq = {};
     steps.forEach(function (s) { stepBySeq[s.Task_Sequence] = s; });
 
     tasks.forEach(function (t) {
+      if (CLOSED_STATUSES.indexOf(t.Status) !== -1) return; // only new + open tasks
       const step = stepBySeq[t.Sequence];
       if (!step) return;
-      const deps = WorkflowSeed.parseDependencies(step.Dependency_Sequences)
-        .filter(function (seq) { return seqToId[seq]; });
-      if (!deps.length) return;
-      const primary = Math.max.apply(null, deps); // last predecessor to finish
-      const depId = seqToId[primary];
-      if (depId && t.Dependency_Task_ID !== depId) repo.updateById(t.Task_ID, { Dependency_Task_ID: depId });
+      const depSeqs = WorkflowSeed.parseDependencies(step.Dependency_Sequences)
+        .filter(function (seq) { return seqToId[seq]; })
+        .sort(function (a, b) { return a - b; });
+      const depIds = depSeqs.map(function (seq) { return seqToId[seq]; });
+      const idsJson = depIds.length ? JSON.stringify(depIds) : '';
+      const primary = depSeqs.length ? seqToId[depSeqs[depSeqs.length - 1]] : ''; // latest predecessor
+      if ((t.Dependency_Task_IDs || '') !== idsJson || (t.Dependency_Task_ID || '') !== primary) {
+        repo.updateById(t.Task_ID, { Dependency_Task_IDs: idsJson, Dependency_Task_ID: primary });
+      }
     });
+  }
+
+  /**
+   * Parse a task's authoritative dependency list.
+   * @param {Object} task
+   * @returns {string[]} predecessor Task IDs
+   */
+  function getDependencies(task) {
+    if (!task || !task.Dependency_Task_IDs) return [];
+    try { const a = JSON.parse(task.Dependency_Task_IDs); return Array.isArray(a) ? a : []; }
+    catch (e) { return []; }
   }
 
   /**
@@ -208,5 +228,6 @@ const TaskService = (function () {
     blockTask: blockTask,
     getOpenTasks: getOpenTasks,
     detectOverdue: detectOverdue,
+    getDependencies: getDependencies,
   };
 })();
