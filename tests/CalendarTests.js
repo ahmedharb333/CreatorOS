@@ -8,6 +8,16 @@
  */
 function CalendarTests_() {
   const CAL_ID = 'creatoros-test-cal';
+  // These cases create/delete events against a dedicated test calendar. That calendar
+  // only exists in the Node CalendarApp mock; on a real bound project it is absent, and
+  // we deliberately do NOT fall back to the creator's real calendar (Run Tests must never
+  // mutate live calendar data). So skip the suite cleanly when the fixture is unavailable.
+  if (!hasTestCalendar_(CAL_ID)) {
+    return [{
+      name: 'CAL-000 (guarded) calendar suite skipped — no in-memory test calendar in this environment',
+      fn: function (t) { t.truthy(true, 'skipped: calendar logic is covered via the Node mock; real-calendar mutation is never run here'); },
+    }];
+  }
   return [
     {
       name: 'CAL-001 testConnection succeeds for a valid id, fails for unknown',
@@ -149,6 +159,11 @@ function CalendarTests_() {
       },
     },
   ];
+}
+
+/** @private Is the dedicated in-memory test calendar reachable (Node mock only)? */
+function hasTestCalendar_(calId) {
+  try { return !!CalendarApp.getCalendarById(calId); } catch (e) { return false; }
 }
 
 /** @private Create a content + a scheduled task in the given week; approve the week unless noApprove. */

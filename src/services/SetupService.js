@@ -88,6 +88,16 @@ const SetupService = (function () {
       const res = repo().setValues(settings || {});
       mirrorToConfig();
       LoggerService.info(MODULE, 'Settings saved', { detail: { written: res.written, missing: res.missing } });
+      // A required key in `missing` means its SETUP row does not exist, so the value
+      // was NOT persisted. Never report that as success — the sheet needs repair.
+      const requiredMissing = res.missing.filter(function (k) { return REQUIRED_KEYS.indexOf(k) !== -1; });
+      if (requiredMissing.length) {
+        LoggerService.warn(MODULE, 'Required settings could not be persisted (missing SETUP rows)', { detail: { requiredMissing: requiredMissing } });
+        return fail(ERR.SETUP_REQUIRED_FIELD_MISSING,
+          'Could not save required setting(s): ' + requiredMissing.join(', ') +
+          '. Those rows are missing from the SETUP sheet — run Initialize / Repair Workbook, then try again.',
+          res, ['missing required SETUP rows: ' + requiredMissing.join(', ')]);
+      }
       if (res.missing.length) {
         return ok('SETTINGS_SAVED_PARTIAL', 'Saved, but some keys were unknown.', res, ['unknown keys: ' + res.missing.join(', ')]);
       }

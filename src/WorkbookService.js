@@ -181,13 +181,12 @@ const WorkbookService = (function () {
     });
   }
 
-  /** @private Seed the SETUP setting rows only when empty. */
-  function seedSetup() {
-    const sheet = ss().getSheetByName(SHEETS.SETUP);
-    if (sheet.getLastRow() > 1) return;
-    // [Setting_Key, Setting_Label, Setting_Value, Setting_Type, Required, Validation_Rule, Setup_Section, Last_Updated]
-    const S = ENUMS.SETUP_SECTION;
-    const rows = [
+  /**
+   * @private Default SETUP setting rows. Column order = SETUP headers:
+   * [Setting_Key, Setting_Label, Setting_Value, Setting_Type, Required, Validation_Rule, Setup_Section, Last_Updated]
+   */
+  function setupSeedRows() {
+    return [
       ['CREATOR_NAME', 'Creator name', '', 'text', true, '', 'Profile', ''],
       ['BRAND_NAME', 'Brand name', '', 'text', true, '', 'Profile', ''],
       ['TIMEZONE', 'Timezone', 'Etc/GMT', 'text', true, 'timezone', 'Profile', ''],
@@ -208,7 +207,34 @@ const WorkbookService = (function () {
       ['AI_KEY_STATUS', 'AI key status', 'Not configured', 'text', false, '', 'AI', ''],
       ['ONBOARDING_STATUS', 'Onboarding status', 'Not started', 'text', true, '', 'Profile', ''],
     ];
-    sheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
+  }
+
+  /**
+   * @private Seed/repair the SETUP setting rows. Self-healing and data-preserving:
+   * on an empty sheet writes every default row; on a populated sheet appends only the
+   * default rows whose Setting_Key is absent (schema drift or a partial legacy seed),
+   * and never overwrites a value the creator has already entered (FR-001, NFR-008).
+   * This makes "Initialize / Repair" actually restore missing required settings.
+   */
+  function seedSetup() {
+    const sheet = ss().getSheetByName(SHEETS.SETUP);
+    const rows = setupSeedRows();
+    const last = sheet.getLastRow();
+    if (last < 2) {
+      sheet.getRange(2, 1, rows.length, rows[0].length).setValues(rows);
+      return;
+    }
+    // Populated: Setting_Key is column 1 — append only rows whose key is missing.
+    const existing = {};
+    sheet.getRange(2, 1, last - 1, 1).getValues().forEach(function (r) {
+      if (r[0] !== '' && r[0] != null) existing[String(r[0])] = true;
+    });
+    const missing = rows.filter(function (r) { return !existing[r[0]]; });
+    if (!missing.length) return;
+    sheet.getRange(last + 1, 1, missing.length, missing[0].length).setValues(missing);
+    LoggerService.info(MODULE, 'SETUP repaired: added missing setting rows', {
+      detail: { added: missing.map(function (m) { return m[0]; }) },
+    });
   }
 
   /** @private Seed the in-workbook CHANGELOG with the current version once. */
