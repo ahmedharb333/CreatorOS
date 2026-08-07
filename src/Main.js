@@ -1,6 +1,11 @@
 /**
  * Main.gs — lifecycle entry points.
  *
+ * DEPLOYMENT NOTE (Apps Script): base classes must load before their subclasses
+ * (`class X extends BaseRepository/AiProvider`). Load order is enforced via
+ * `.clasp.json` `filePushOrder` (BaseRepository/AiProvider pushed first). Without it,
+ * "AiLogRepository" sorts before "BaseRepository" and the project fails to compile.
+ *
  * `onOpen` builds the menu and performs a light first-run check. Heavy work
  * (building sheets) is never done silently on open without the schema being
  * absent — we avoid surprising writes and never create triggers without consent

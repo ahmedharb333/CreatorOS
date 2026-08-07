@@ -5,6 +5,18 @@
   "scriptExtensions": [".js", ".gs"],
   "htmlExtensions": [".html"],
   "jsonExtensions": [".json"],
-  "filePushOrder": [],
-  "skipSubdirectories": false
+  "skipSubdirectories": false,
+  "filePushOrder": [
+    "src/Common.js",
+    "src/Errors.js",
+    "src/Constants.js",
+    "src/AiPrompts.js",
+    "src/EmptyStates.js",
+    "src/LoggerService.js",
+    "src/IdService.js",
+    "src/ValidationService.js",
+    "src/ConfigService.js",
+    "src/repositories/BaseRepository.js",
+    "src/providers/AiProvider.js"
+  ]
 }
