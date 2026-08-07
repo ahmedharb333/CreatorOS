@@ -1,5 +1,6 @@
 [INFO] WorkbookService: Workbook build complete
 [INFO] WorkflowSeed: Default workflows loaded
+[ERROR] HomeService: sheet.getRange(...).clearContent is not a function
 [INFO] SetupService: Settings saved
 [INFO] SetupService: Setup completed
 [INFO] IdeaService: Idea created
@@ -103,10 +104,33 @@
 [ERROR] AiService: No AI key configured.
 [INFO] ContentService: Content created
 [INFO] RepurposingService: Rule-based suggestions created
-[INFO] TestRunner: Test run complete: 76/76 passed
+[INFO] WorkspaceService: Entered Creator Mode
+[INFO] WorkspaceService: Entered Advanced Workspace
+[INFO] WorkspaceService: Entered Creator Mode
+[INFO] IdeaService: Idea created
+[INFO] ContentService: Content created
+[INFO] IdeaService: Idea created
+[INFO] IdeaService: Idea created
+[INFO] SetupService: Settings saved
+[INFO] SetupService: Setup completed
+[INFO] ContentService: Content created
+[INFO] TaskService: Tasks generated
+[INFO] ContentService: Content created
+[INFO] TaskService: Tasks generated
+[INFO] ContentService: Content created
+[INFO] PlanningService: Weekly plan built
+[INFO] PlanningService: Weekly plan approved
+[INFO] PlanningService: Auto-allocation complete
+[INFO] PerformanceService: Performance recorded
+[INFO] RepurposingService: Rule-based suggestions created
+[INFO] DashboardService: Dashboard refreshed
+[ERROR] HomeService: sheet.getRange(...).clearContent is not a function
+[INFO] SampleDataService: Sample workspace loaded
+[ERROR] HomeService: sheet.getRange(...).clearContent is not a function
+[INFO] TestRunner: Test run complete: 85/85 passed
 INIT: WORKBOOK_READY — CreatorOS workbook initialized.
 CreatorOS Milestone 1 tests
-76 / 76 passed, 0 failed.
+85 / 85 passed, 0 failed.
 
 All green.
 
@@ -114,7 +138,7 @@ All green.
 
 ## Executed run
 
-76 / 76 passed, 0 failed.
+85 / 85 passed, 0 failed.
 
 | Suite | Case | Result | Detail |
 |---|---|---|---|
@@ -194,4 +218,13 @@ All green.
 | AI | AI-008 API key never appears in AI_LOG | PASS |  |
 | AI | AI-009 Anthropic adapter parses a provider response | PASS |  |
 | AI | AI-010 disabled repurposing falls back to rule-based mappings | PASS |  |
+| CreatorExperience | CX-WS-001 classify: exactly the 5 creator sheets are creator-visible | PASS |  |
+| CreatorExperience | CX-WS-002 Creator Mode hides system sheets; Advanced reveals them | PASS |  |
+| CreatorExperience | CX-ONB-001 onboarding state has steps + progress | PASS |  |
+| CreatorExperience | CX-HOME-001 HOME model leads with Execution Score + supporting KPIs | PASS |  |
+| CreatorExperience | CX-EMPTY-001 Empty State Library + success moments are complete | PASS |  |
+| CreatorExperience | CX-UI-001 Add Idea dialog context + submit create an idea | PASS |  |
+| CreatorExperience | CX-UI-002 Create Content dialog submit creates content | PASS |  |
+| CreatorExperience | CX-UI-003 AI Review accept creates ideas via IdeaService (approval) | PASS |  |
+| CreatorExperience | CX-SAMPLE-001 (guarded) sample workspace populates, then starts empty | PASS |  |
 

@@ -48,6 +48,7 @@ const TestRunner = (function () {
       { suite: 'Analytics', cases: (typeof AnalyticsTests_ === 'function') ? AnalyticsTests_() : [] },
       { suite: 'Dashboard', cases: (typeof DashboardTests_ === 'function') ? DashboardTests_() : [] },
       { suite: 'AI', cases: (typeof AiTests_ === 'function') ? AiTests_() : [] },
+      { suite: 'CreatorExperience', cases: (typeof CreatorExperienceTests_ === 'function') ? CreatorExperienceTests_() : [] },
     ];
   }
 

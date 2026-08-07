@@ -74,6 +74,17 @@ Bound-project procedure + results template: `docs/Calendar_Integration_Test_Plan
 | — | AI consumes analytics via AnalyticsService only (Analytics Contract) | `AiService.creatorContext` → `AnalyticsService.getKpis()` | AI-007 | **Passed** |
 | — | Selling moments (score-drop / recover-without-delay / realistic-plan) | `analyzePerformance`/`explainRecovery`/`generateWeeklyPlan` | AI-004/007 | **Passed** |
 
+## Creator Experience — usability (Passed via mock; visual walkthrough recommended, I-08)
+
+| Req | Requirement | Implementation | Test(s) | Status |
+|---|---|---|---|---|
+| NFR-004 | Non-technical usability; creator-first surface | Creator Mode default, HOME console, dialogs, empty states | CX-WS-001/002, CX-HOME-001, CX-EMPTY-001 | **Passed (mock)** |
+| — | Hidden system sheets via visibility metadata (ADR-019/021) | `WorkspaceService` | CX-WS-002 | **Passed** |
+| — | Guided onboarding + progress | `OnboardingService`, HOME | CX-ONB-001 | **Passed** |
+| — | Action-oriented dialogs (Add Idea / Create Content / AI Review) | `UiService` + HTML | CX-UI-001/002/003 | **Passed (data); render pending I-08** |
+| — | Flagship Sample Workspace (5-minute demo) | `SampleDataService.loadSampleWorkspace` | CX-SAMPLE-001 | **Passed** |
+| — | Execution Score as HOME hero | `HomeService`, `AnalyticsService` | CX-HOME-001 | **Passed** |
+
 ## Requirements owned by later milestones (Not Started, by instruction)
 
 | Req | Requirement | Milestone |
@@ -85,9 +96,9 @@ Bound-project procedure + results template: `docs/Calendar_Integration_Test_Plan
 
 ## Sign-off snapshot
 
-- M1–M5 scope (foundational, core domain, calendar, recovery & analytics, AI): **implemented and executed green via mock.**
-- Executed tests: **34/34 pure-logic**, **76/76 GAS suites via mock**, **53/53 `node --check`** = **110/110**, 0 failed.
-- **M3 approval requires bound-project Calendar evidence** (I-06); **M5 benefits from live-provider AI evidence** (I-07). Both mock-green today.
+- M1–M5 + Creator Experience: **implemented and executed green via mock.**
+- Executed tests: **34/34 pure-logic**, **85/85 GAS suites via mock**, **61/61 `node --check`** = **119/119**, 0 failed.
+- Visual/live confirmations complement the mock: bound Calendar (I-06), live-provider AI (I-07), CX dialog walkthrough (I-08).
 - On-Google run recommended as final confirmation (I-01, downgraded).
 - Unresolved Critical defects: **0.** Unresolved High defects: **0.**
 - Recommendation: **Milestone 1 approved with corrections applied**; proceed to Milestone 2.

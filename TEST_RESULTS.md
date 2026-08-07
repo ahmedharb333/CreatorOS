@@ -1,7 +1,7 @@
-# CreatorOS — Test Results (cumulative, through Milestone 5)
+# CreatorOS — Test Results (cumulative, current product)
 
-- Product `1.0.0` · Schema `1` · Cumulative across Milestones 1–5 (foundational, core domain, calendar,
-  recovery & analytics, AI). Re-run any time with `node tests/node/run_gas_suites.js` + `node tests/node/pure_tests.js`.
+- Product `1.0.0` · Schema `1` · Cumulative across Milestones 1–5 + the Creator Experience milestone.
+  Re-run any time with `node tests/node/run_gas_suites.js` + `node tests/node/pure_tests.js`.
 - Last updated: 2026-08-07
 
 ## Execution surfaces
@@ -18,23 +18,24 @@ protections, Script/User properties, LockService. It is not the real Google engi
 remains the final acceptance surface — but the previously-pending suites are now **executed with real
 pass/fail**, not merely authored.
 
-## Summary (Milestones 1 + 2 + 3 + 4 + 5)
+## Summary (Milestones 1–5 + Creator Experience)
 
 | Metric | Count |
 |---|---:|
-| **Total test cases** | **110** |
-| **Passed** | **110** |
+| **Total test cases** | **119** |
+| **Passed** | **119** |
 | **Failed** | **0** |
 | **Skipped** | **0** |
-| Static analysis (`node --check`) | 53 / 53 files OK |
+| Static analysis (`node --check`) | 61 / 61 files OK |
 
 - Pure-logic: **34 / 34 passed** (`tests/pure_test_output.txt`).
-- GAS suites via mock: **76 / 76 passed** — Schema 8, IdService 5, Validation 6, Repository 6, **Domain 12**,
-  **Planning 5**, **Calendar 10**, **Recovery 4**, **Repurposing 3**, **Performance 3**, **Analytics 2**,
-  **Dashboard 2**, **AI 10** (disabled-fallback, key-not-configured, HTTP→AI_* normalization, approval model /
-  no records written, schema-invalid, auth error, AnalyticsService-sourced analysis, key-never-in-AI_LOG,
-  Anthropic adapter parse, rule-based repurposing fallback).
-- **M5 AI:** live-provider calls are not exercised by the mock (stub providers + mock UrlFetchApp) — see I-07.
+- GAS suites via mock: **85 / 85 passed** — Schema 8, IdService 5, Validation 6, Repository 6, Domain 12,
+  Planning 5, Calendar 10, Recovery 4, Repurposing 3, Performance 3, Analytics 2, Dashboard 2, **AI 10**,
+  **CreatorExperience 9** (Creator Mode hide/show, onboarding, HOME hero=Execution Score, empty-state library,
+  Add Idea / Create Content / AI-Review server functions, and the **flagship sample workspace** — populated then
+  cleanly reset, guarded to never wipe real data).
+- **Visual/live confirmations** (complement the mock): live-provider AI (I-07), CX HTML dialog walkthrough (I-08),
+  bound Calendar (I-06). HTML rendering + the felt five-minute flow are captured as bound-project screenshots.
 - M4 highlights: Execution Score (AN-001), recovery marks calendar `Changed` not auto-push (REC-002),
   DEFER_CONTENT shifts dates (REC-003), rule-based repurposing + accept (RPS-001/002), performance validation
   (PERF-001/002), decision-oriented dashboard render (DASH-001), sheet visibility metadata (SCH-008).
@@ -42,17 +43,19 @@ pass/fail**, not merely authored.
 - **Milestone 3 approval additionally requires bound-project (real Google Calendar) integration evidence** —
   `docs/Calendar_Integration_Test_Plan.md` (I-06). M4 adds no new external API.
 
-## 1. GAS suites via mock — EXECUTED ✅ (76/76)
+## 1. GAS suites via mock — EXECUTED ✅ (85/85)
 
 Runner: `node tests/node/run_gas_suites.js`. Workbook is built + workflows seeded in the mock, then the
 same `TestRunner` suites execute. Captured output: `tests/gas_mock_output.txt`.
 
 ```
 INIT: WORKBOOK_READY — CreatorOS workbook initialized.
-CreatorOS Milestone 1 tests
-24 / 24 passed, 0 failed.
+85 / 85 passed, 0 failed.
 All green.
 ```
+
+Representative Schema/Id/Validation/Repository cases (full per-case output for all 14 suites — incl. Calendar,
+Recovery, Repurposing, Performance, Analytics, Dashboard, AI, CreatorExperience — is in `tests/gas_mock_output.txt`):
 
 | Suite | Case | Result |
 |---|---|---|
@@ -90,7 +93,8 @@ secret sanitization ×4, timezone ×2, AppError ×2.
 
 ## 3. Static analysis — EXECUTED ✅
 
-`node --check`: **24/24** clasp-pushed files + **3/3** node harness files = 27/27 OK, 0 syntax errors.
+`node --check`: **61/61** clasp-pushed source/test files OK (+ node harness), 0 syntax errors. (HTML dialogs
+are validated by rendering on a bound project, I-08.)
 
 ## 4. Edge cases covered
 
@@ -124,5 +128,6 @@ final confirmation on the real Sheets engine; the logic is already executed gree
 | No API key exposure | required | met (design + sanitize verified) |
 | No duplicate calendar events | required | N/A this milestone (calendar in M3) |
 
-**Milestones 1 + 2: 75/75 executed green** (34 pure + 41 GAS-mock). Full per-case output incl. the Domain
-and Planning suites is captured in `tests/gas_mock_output.txt`. On-Google run recommended as final confirmation.
+**Current product: 119/119 executed green** (34 pure + 85 GAS-mock). Full per-case output in
+`tests/gas_mock_output.txt`. On-Google run + the visual/live confirmations (I-06/I-07/I-08) recommended as
+final acceptance surfaces.

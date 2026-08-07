@@ -110,3 +110,24 @@ versioning with two tracked numbers: **PRODUCT_VERSION** (`MAJOR.MINOR.PATCH`) a
 - **Docs**: `Analytics_Contract.md` (KPI reference), ADR-020, REQUIREMENT_COVERAGE retitled cumulative.
 - **Tests**: AI suite (10) via stub providers + mock UrlFetchApp. **110/110 green** (34 pure + 76 GAS-mock).
   Live-provider evidence recommended before sign-off (I-07).
+
+## [Unreleased] — Creator Experience milestone
+
+- **Creator Mode by default** (`WorkspaceService`): system sheets hidden via the `visibility` metadata (no
+  hardcoded names); "Enable Advanced Workspace" reveals them. Applied on open + init (ADR-021).
+- **HOME console** (`HomeService`): **Execution Score** as the hero + one-line "why", status, "what to do next",
+  supporting KPIs, and the onboarding checklist until complete.
+- **Flagship Sample Workspace** (`SampleDataService.loadSampleWorkspace`): one fictional creator, realistic
+  schedule, published + in-production content, completed + upcoming tasks, an overdue recovery example, an
+  approved auto-allocated (calendar-ready) plan, performance, repurposing, populated dashboard. `startEmptyWorkspace()`
+  resets. The destructive test is guarded to never wipe real data.
+- **Guided onboarding** (`OnboardingService`): live checklist + progress from data; SETUP stays authoritative.
+- **Action-oriented HTML dialogs** (`ui/UiService` + `AddIdea.html`/`CreateContent.html`/`AiReview.html`):
+  server functions write through existing services (validation + AI approval preserved). `.claspignore` pushes HTML.
+- **Empty State Library** (`EMPTY_STATES`) + **contextual success moments** (`SuccessService`, incl. Execution
+  Score increase detection).
+- **Menu simplified**: creator actions up top; system/advanced tools under "More"; a "Workspace" submenu
+  (Creator Mode / Advanced / Start Empty / Initialize).
+- **`docs/FIRST_5_MINUTES.md`** — the benchmark for every UX decision.
+- **Tests**: CreatorExperience suite (9). **119/119 green** (34 pure + 85 GAS-mock). No schema/API changes.
+  Dialog rendering + the felt five-minute flow captured as bound-project screenshots (I-08).

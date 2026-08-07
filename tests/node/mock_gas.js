@@ -119,6 +119,11 @@ class MockSheet {
   setColumnWidth() { return this; }
   protect() { const p = new MockProtection('SHEET', this, null); this._protections.push(p); return p; }
   getProtections(type) { return this._protections.filter(function (p) { return p.type === type; }); }
+  hideSheet() { this._hidden = true; return this; }
+  showSheet() { this._hidden = false; return this; }
+  isSheetHidden() { return !!this._hidden; }
+  clear() { this.cells = []; return this; }
+  clearContents() { this.cells = []; return this; }
 }
 
 // ---------- Formula evaluation (supports the priority formula: IF/OR, refs, named ranges) ----------
@@ -262,7 +267,12 @@ globalThis.SpreadsheetApp = {
   flush: function () {},
   getUi: function () {
     const menu = { addItem: function () { return menu; }, addSeparator: function () { return menu; }, addToUi: function () {}, addSubMenu: function () { return menu; } };
-    return { createMenu: function () { return menu; }, alert: function () {}, ButtonSet: { OK: 'OK' } };
+    return {
+      createMenu: function () { return menu; }, alert: function () {},
+      showModalDialog: function () {}, showModelessDialog: function () {}, showSidebar: function () {},
+      prompt: function () { return { getSelectedButton: function () { return 'CANCEL'; }, getResponseText: function () { return ''; } }; },
+      ButtonSet: { OK: 'OK', OK_CANCEL: 'OK_CANCEL' }, Button: { OK: 'OK', CANCEL: 'CANCEL' },
+    };
   },
 };
 globalThis.PropertiesService = { _script: new MockProps(), _user: new MockProps(),
@@ -274,6 +284,10 @@ globalThis.Session = { getScriptTimeZone: function () { return 'Etc/GMT'; } };
 // UrlFetchApp mock — default returns 200 '{}'. Tests reassign UrlFetchApp.fetch and use __mockHttp().
 globalThis.__mockHttp = function (code, text) { return { getResponseCode: function () { return code; }, getContentText: function () { return text; } }; };
 globalThis.UrlFetchApp = { fetch: function () { return globalThis.__mockHttp(200, '{}'); } };
+
+// HtmlService mock — dialogs are not rendered in tests; only their server data functions are exercised.
+function htmlChain() { const o = { setWidth: function () { return o; }, setHeight: function () { return o; }, setTitle: function () { return o; }, getContent: function () { return ''; }, evaluate: function () { return o; } }; return o; }
+globalThis.HtmlService = { createHtmlOutput: function () { return htmlChain(); }, createTemplateFromFile: function () { return htmlChain(); }, XFrameOptionsMode: { DEFAULT: 'DEFAULT' } };
 
 module.exports = {
   spreadsheet: _ss,

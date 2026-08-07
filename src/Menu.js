@@ -9,43 +9,78 @@
  */
 function buildMenu_() {
   const ui = SpreadsheetApp.getUi();
+  // Creator-first: the everyday actions are up top; system/advanced tools live under "More".
   ui.createMenu('CreatorOS')
-    .addItem('Open Home', 'menuOpenHome')
+    .addItem('Home', 'menuOpenHome')
+    .addItem('Today', 'menuOpenToday')
     .addSeparator()
-    .addItem('Initialize / Repair Workbook', 'menuInitializeWorkbook')
-    .addItem('Load Default Workflows', 'menuLoadWorkflows')
-    .addItem('Verify Schema', 'menuVerifySchema')
-    .addSeparator()
-    .addItem('Complete Setup', 'menuCompleteSetup')
-    .addItem('Reopen Setup', 'menuReopenSetup')
-    .addSeparator()
+    .addItem('Add Idea', 'menuAddIdea')
+    .addItem('Create Content', 'menuCreateContent')
     .addItem('Build Weekly Plan', 'menuBuildWeeklyPlan')
-    .addItem('Open Today', 'menuOpenToday')
-    .addSeparator()
-    .addItem('Connect Calendar', 'menuConnectCalendar')
-    .addItem('Push to Calendar', 'menuPushCalendar')
-    .addItem('Sync Calendar', 'menuSyncCalendar')
-    .addItem('Recreate Missing Events', 'menuRecreateMissing')
-    .addSeparator()
-    .addItem('Run Recovery', 'menuRunRecovery')
-    .addItem('Suggest Repurposing', 'menuSuggestRepurposing')
-    .addItem('Record Performance', 'menuRecordPerformance')
     .addItem('Refresh Dashboard', 'menuRefreshDashboard')
+    .addItem('AI Review', 'menuAiReview')
     .addSeparator()
-    .addItem('AI: Set Up Provider', 'menuAiSetup')
-    .addItem('AI: Test Connection', 'menuAiTest')
-    .addItem('AI: Weekly Plan', 'menuAiWeeklyPlan')
-    .addItem('AI: Explain Execution Score', 'menuAiExplainScore')
-    .addItem('AI: Disable', 'menuAiDisable')
-    .addSeparator()
-    .addItem('Run Tests', 'menuRunTests')
-    .addSeparator()
-    .addItem('About CreatorOS', 'menuAbout')
+    .addItem('Try Sample Workspace', 'menuLoadSample')
+    .addSubMenu(ui.createMenu('More')
+      .addItem('Complete Setup', 'menuCompleteSetup')
+      .addItem('Reopen Setup', 'menuReopenSetup')
+      .addSeparator()
+      .addItem('Connect Calendar', 'menuConnectCalendar')
+      .addItem('Push to Calendar', 'menuPushCalendar')
+      .addItem('Sync Calendar', 'menuSyncCalendar')
+      .addItem('Recreate Missing Events', 'menuRecreateMissing')
+      .addSeparator()
+      .addItem('Run Recovery', 'menuRunRecovery')
+      .addItem('Suggest Repurposing', 'menuSuggestRepurposing')
+      .addItem('Record Performance', 'menuRecordPerformance')
+      .addSeparator()
+      .addItem('AI: Set Up Provider', 'menuAiSetup')
+      .addItem('AI: Test Connection', 'menuAiTest')
+      .addItem('AI: Weekly Plan', 'menuAiWeeklyPlan')
+      .addItem('AI: Explain Execution Score', 'menuAiExplainScore')
+      .addItem('AI: Disable', 'menuAiDisable')
+      .addSeparator()
+      .addItem('Load Default Workflows', 'menuLoadWorkflows')
+      .addItem('Verify Schema', 'menuVerifySchema')
+      .addItem('Run Tests', 'menuRunTests')
+      .addItem('About CreatorOS', 'menuAbout'))
+    .addSubMenu(ui.createMenu('Workspace')
+      .addItem('Creator Mode (simple)', 'menuCreatorMode')
+      .addItem('Enable Advanced Workspace', 'menuAdvancedWorkspace')
+      .addSeparator()
+      .addItem('Start Empty Workspace', 'menuStartEmpty')
+      .addItem('Initialize / Repair Workbook', 'menuInitializeWorkbook'))
     .addToUi();
 }
 
-/** Menu: focus HOME. */
+/** Menu: open the Add Idea dialog. */
+function menuAddIdea() { UiService.showAddIdea(); }
+/** Menu: open the Create Content dialog. */
+function menuCreateContent() { UiService.showCreateContent(); }
+/** Menu: open the AI Review dialog. */
+function menuAiReview() { UiService.showAiReview(); }
+/** Menu: load the sample workspace, then refocus HOME. */
+function menuLoadSample() {
+  const r = SampleDataService.loadSampleWorkspace();
+  toast_(r.message, 'CreatorOS');
+  menuOpenHome();
+}
+/** Menu: start an empty workspace (clears sample/demo data). */
+function menuStartEmpty() {
+  const ui = SpreadsheetApp.getUi();
+  const ok = ui.alert('Start Empty Workspace', 'This clears all ideas, content, tasks, plans, and performance data. Continue?', ui.ButtonSet.OK_CANCEL);
+  if (ok !== ui.Button.OK) return;
+  toast_(SampleDataService.startEmptyWorkspace().message, 'CreatorOS');
+  menuOpenHome();
+}
+/** Menu: switch to Creator Mode (hide system sheets). */
+function menuCreatorMode() { toast_(WorkspaceService.enterCreatorMode().message, 'CreatorOS'); }
+/** Menu: enable Advanced Workspace (reveal system sheets). */
+function menuAdvancedWorkspace() { toast_(WorkspaceService.enterAdvancedWorkspace().message, 'CreatorOS'); }
+
+/** Menu: refresh + focus HOME. */
 function menuOpenHome() {
+  try { HomeService.render(); } catch (e) { /* home renders best-effort */ }
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEETS.HOME);
   if (sheet) SpreadsheetApp.setActiveSheet(sheet);
 }

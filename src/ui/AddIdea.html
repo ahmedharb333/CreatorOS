@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+  body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; margin: 16px; color: #1f2937; }
+  h2 { margin: 0 0 4px; color: #2563eb; }
+  .hint { color: #6b7280; font-size: 12px; margin-bottom: 14px; }
+  label { display:block; font-size: 12px; font-weight: 600; margin: 10px 0 3px; }
+  input, select, textarea { width: 100%; box-sizing: border-box; padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; }
+  .row { display:flex; gap: 10px; } .row > div { flex:1; }
+  .actions { margin-top: 16px; display:flex; gap:8px; }
+  button { padding: 9px 14px; border:0; border-radius:6px; cursor:pointer; font-weight:600; }
+  .primary { background:#2563eb; color:#fff; } .secondary { background:#eef2f7; color:#1f2937; }
+  #msg { margin-top:10px; font-size:13px; }
+</style>
+</head>
+<body>
+  <h2>Add Idea</h2>
+  <div class="hint">Capture a content idea. You can score and convert it to content later.</div>
+  <label>Title</label>
+  <input id="title" placeholder="e.g. Why most creators quit at month 3" />
+  <label>Description</label>
+  <textarea id="description" rows="2" placeholder="Optional"></textarea>
+  <div class="row">
+    <div><label>Pillar</label><select id="pillar"></select></div>
+    <div><label>Platform</label><select id="platform"></select></div>
+  </div>
+  <div class="row">
+    <div><label>Format</label><select id="format"></select></div>
+    <div><label>Strategic goal</label><select id="goal"></select></div>
+  </div>
+  <div class="row">
+    <div><label>Effort (1-5)</label><input id="effort" type="number" min="1" max="5" value="3"/></div>
+    <div><label>Impact (1-5)</label><input id="impact" type="number" min="1" max="5" value="3"/></div>
+    <div><label>Confidence (1-5)</label><input id="confidence" type="number" min="1" max="5" value="3"/></div>
+  </div>
+  <div class="actions">
+    <button class="primary" onclick="save()">Save Idea</button>
+    <button class="secondary" onclick="google.script.host.close()">Cancel</button>
+  </div>
+  <div id="msg"></div>
+<script>
+  function fill(id, arr){ var s=document.getElementById(id); arr.forEach(function(v){ var o=document.createElement('option'); o.text=v; o.value=v; s.add(o); }); }
+  google.script.run.withSuccessHandler(function(ctx){
+    fill('pillar', ctx.pillars); fill('platform', ctx.platforms); fill('format', ctx.formats); fill('goal', ctx.goals);
+  }).uiGetIdeaFormContext();
+  function save(){
+    var form = { title:val('title'), description:val('description'), pillar:val('pillar'), platform:val('platform'),
+      format:val('format'), goal:val('goal'), effort:val('effort'), impact:val('impact'), confidence:val('confidence') };
+    if(!form.title){ msg('Please enter a title.', true); return; }
+    google.script.run.withSuccessHandler(function(res){
+      if(res.success){ msg('✓ ' + res.message); setTimeout(google.script.host.close, 900); }
+      else { msg(res.message || 'Could not save.', true); }
+    }).uiSubmitIdea(form);
+  }
+  function val(id){ return document.getElementById(id).value.trim(); }
+  function msg(t, err){ var m=document.getElementById('msg'); m.textContent=t; m.style.color = err ? '#dc2626' : '#16a34a'; }
+</script>
+</body>
+</html>

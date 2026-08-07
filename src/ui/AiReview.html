@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+  body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; margin: 16px; color: #1f2937; }
+  h2 { margin: 0 0 4px; color: #2563eb; }
+  .hint { color: #6b7280; font-size: 12px; margin-bottom: 12px; }
+  .tabs { display:flex; gap:8px; margin-bottom:12px; }
+  .tab { padding:6px 10px; border-radius:6px; background:#eef2f7; cursor:pointer; font-size:13px; font-weight:600; }
+  .tab.active { background:#2563eb; color:#fff; }
+  .card { border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-bottom:8px; }
+  .src { display:inline-block; font-size:11px; color:#6b7280; margin-bottom:8px; }
+  ul { margin:6px 0; padding-left:18px; }
+  .actions { margin-top:12px; display:flex; gap:8px; }
+  button { padding:9px 14px; border:0; border-radius:6px; cursor:pointer; font-weight:600; }
+  .primary { background:#2563eb; color:#fff; } .secondary { background:#eef2f7; color:#1f2937; }
+</style>
+</head>
+<body>
+  <h2>AI Review</h2>
+  <div class="hint">AI proposes — you approve. Nothing is saved until you accept.</div>
+  <div class="tabs">
+    <div class="tab active" data-k="performance" onclick="load('performance')">Why my score?</div>
+    <div class="tab" data-k="weekly" onclick="load('weekly')">Weekly plan</div>
+    <div class="tab" data-k="ideas" onclick="load('ideas')">Ideas</div>
+  </div>
+  <div id="out" class="card">Loading…</div>
+  <div class="actions" id="acceptBar" style="display:none">
+    <button class="primary" onclick="accept()">Accept</button>
+    <button class="secondary" onclick="google.script.host.close()">Close</button>
+  </div>
+<script>
+  var current = 'performance', payload = null;
+  function setTab(k){ document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-k')===k); }); }
+  function load(k){
+    current = k; setTab(k); document.getElementById('out').textContent = 'Loading…'; document.getElementById('acceptBar').style.display='none';
+    google.script.run.withSuccessHandler(render).uiGetAiReview(k);
+  }
+  function render(res){
+    payload = res; var out = document.getElementById('out');
+    var src = res.data && res.data.source ? '<span class="src">source: ' + res.data.source + '</span>' : '';
+    if(current==='performance'){
+      var a = (res.data && res.data.analysis) || {};
+      out.innerHTML = src + '<b>' + esc(a.headline||'') + '</b><ul>' + list(a.observations) + '</ul><b>Recommendations</b><ul>' + list(a.recommendations) + '</ul>';
+    } else if(current==='weekly'){
+      var p = (res.data && res.data.plan) || {};
+      out.innerHTML = src + '<b>' + esc(p.summary || res.message || '') + '</b>';
+      document.getElementById('acceptBar').style.display='none';
+    } else {
+      var ideas = (res.data && res.data.ideas) || [];
+      out.innerHTML = src + (ideas.length ? ideas.map(function(i){ return '<div class="card"><b>'+esc(i.title)+'</b><br>'+esc(i.angle||i.rationale||'')+'</div>'; }).join('') : esc(res.message||'No suggestions. Enable AI to generate ideas.'));
+      document.getElementById('acceptBar').style.display = ideas.length ? 'flex' : 'none';
+    }
+  }
+  function accept(){
+    if(current!=='ideas' || !payload || !payload.data || !payload.data.ideas) { google.script.host.close(); return; }
+    google.script.run.withSuccessHandler(function(){ google.script.host.close(); }).uiAcceptAiIdeas(payload.data.ideas);
+  }
+  function list(a){ return (a||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join(''); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+  load('performance');
+</script>
+</body>
+</html>

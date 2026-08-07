@@ -205,3 +205,26 @@ the analytics layer — while reinforcing the differentiating selling moments.
 **Consequences:** AI is a value-add layer over the same KPIs the dashboard uses; no lock-in, no key exposure,
 no analytics duplication when M5 AI and the dashboard both consume AnalyticsService. Live provider calls need
 bound-project + key evidence (KNOWN_ISSUES I-07).
+
+## ADR-021 — Creator Experience: effortless by default (Creator Experience milestone)
+**Context:** The system is powerful; the next competitive advantage is making that power feel simple —
+judged by *"would a creator understand and value this in five minutes?"* (`docs/FIRST_5_MINUTES.md`).
+**Decision (approved, CX-1…CX-5 + additions):**
+- **Creator Mode by default** (CX-3): `WorkspaceService` hides system sheets, driven by the `visibility`
+  metadata (never hardcoded names); only HOME/TODAY/IDEAS/CONTENT/DASHBOARD show. "Enable Advanced Workspace"
+  reveals system sheets. This is the one new (UX-only) backend piece.
+- **HOME leads with Execution Score** (CX-5): `HomeService` renders a console — hero Execution Score + a
+  one-line "why", status, "what to do next", supporting KPIs, and the onboarding checklist until complete.
+- **Flagship Sample Workspace** (CX-4): `SampleDataService.loadSampleWorkspace()` seeds a realistic creator
+  through the real services (published + in-production content, completed + upcoming tasks, an overdue recovery
+  example, an approved auto-allocated plan, performance, repurposing, a populated dashboard). `startEmptyWorkspace()`
+  resets. The destructive test is guarded to never wipe a real workbook.
+- **Guided onboarding** (CX-1): `OnboardingService` computes a live checklist + progress from data (no duplicate
+  state); SETUP stays authoritative (a future HTML wizard must call SetupService).
+- **Action-oriented dialogs** (CX-2): HTML dialogs for Add Idea, Create Content, AI Review; server functions in
+  `UiService` write through the existing services, preserving validation and the AI approval model.
+- **Empty State Library** + **contextual success moments**: every major screen has a designed empty state; subtle
+  ✓ celebrations (including "Execution Score increased").
+**Consequences:** No schema changes, no new external APIs — purely UX over the existing services. HTML rendering
+and the felt five-minute flow are captured as bound-project screenshots at the gate (the mock can't render
+HtmlService); all data/logic is mock-executed green.

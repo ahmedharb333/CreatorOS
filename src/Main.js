@@ -16,13 +16,16 @@
 function onOpen(e) {
   buildMenu_();
   try {
-    // First-run: if the core sheets are absent, offer nothing destructive — just a hint.
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     if (!ss.getSheetByName(SHEETS.CONFIG) || ConfigService.getSchemaVersion() == null) {
-      toast_('Run CreatorOS ▸ Initialize / Repair Workbook to set up.', 'Welcome to CreatorOS');
+      toast_('Run CreatorOS ▸ Workspace ▸ Initialize / Repair Workbook to set up.', 'Welcome to CreatorOS');
+      return;
     }
+    // Creator Mode by default: apply the stored workspace visibility and refresh HOME.
+    WorkspaceService.applyCurrent();
+    HomeService.render();
   } catch (err) {
-    console.error('onOpen check failed: ' + (err && err.message));
+    console.error('onOpen setup failed: ' + (err && err.message));
   }
 }
 
@@ -43,6 +46,8 @@ function initializeWorkbook() {
       LoggerService.warn('Main', 'Post-init verification found issues', { detail: verify.issues });
       return fail('WORKBOOK_VERIFY_FAILED', 'Workbook built but verification found ' + verify.issues.length + ' issue(s).', { issues: verify.issues });
     }
+    // Default new installs to Creator Mode (hide system sheets) and render HOME.
+    try { WorkspaceService.applyCurrent(); HomeService.render(); } catch (e) { /* non-fatal */ }
     return ok('WORKBOOK_READY', 'CreatorOS workbook initialized.', { createdSheets: build.data.createdSheets });
   } catch (err) {
     LoggerService.critical('Main', err, { fn: 'initializeWorkbook' });
