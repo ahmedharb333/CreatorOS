@@ -90,12 +90,22 @@ Maps to `22_Installation_Upgrade_Release.md`, `02_Product_Strategy.md`, `29_Perm
 
 ## v1.1 candidate list (parked — needs evidence before building)
 
-Kept so nothing is lost, but **none are started** without observed demand:
+Kept so nothing is lost, but **none are started** without observed demand.
+
+**Parked before UX review:**
 - Notifications (FR-020) + opt-in auto-sync trigger.
 - Richer HTML setup wizard (must call SetupService).
 - Recovery / Performance dialogs.
 - AI review "accept selected / edit" for weekly plan + repurposing.
 - Publishing-milestone all-day calendar events (O-3).
+
+**Parked by the UX baseline (2026-08-07)** — see `docs/design/UX_BASELINE.md`:
+- **Focus Timer** (TODAY) — v1 primary action is "Start Task"; keep components extensible for a timer.
+- **CONTENT Board** view (Kanban) — only if we can deliver first-class Kanban.
+- **CONTENT Timeline** view (publishing cadence lens).
+- **Exact time-blocking lens** (clock-driven TODAY) — default stays priority-driven.
+- **Advanced mobile functionality** — v1 mobile is a view-mostly companion (desktop-first).
+- **Additional dialogs** beyond the approved set.
 
 **Decision rule:** an item leaves this list only when creator testing shows the friction it removes is real.
 
