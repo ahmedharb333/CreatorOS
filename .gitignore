@@ -15,8 +15,18 @@ Thumbs.db
 
 # Secrets — never commit API keys or bound-project credentials
 *.key
+*.pem
+*.token
+*.env
+.env
+.env.*
 secrets/
 credentials.json
+client_secret*.json
+.clasprc.json
+.clasp.json.local
 
-# Release build artifact (regenerated from staging)
+# Release build artifacts (regenerated from staging) and local temp
 *.zip
+dist/
+staging/
