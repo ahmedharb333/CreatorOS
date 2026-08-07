@@ -181,3 +181,27 @@ Google Sheets. Internal sophistication may grow, but the creator's surface must 
 **Consequences:** M4+ features (recovery, repurposing, performance, dashboard) must be menu/dialog/service-
 driven; DASHBOARD/TODAY are rendered (computed) creator-facing views; PERFORMANCE/REPURPOSING remain data
 sheets but are treated as system-internal, with creator interaction via services, not raw editing.
+
+## ADR-020 — AI Integration: optional, customer-funded, analytics-sourced, approval-staged (Milestone 5)
+**Context:** AI must add value without becoming a dependency, without exposing keys, and without duplicating
+the analytics layer — while reinforcing the differentiating selling moments.
+**Decision (approved):**
+- **Optional + customer-funded:** AI is off by default; the customer supplies the key (User Properties only —
+  never cells/logs, docs 29). Core features work fully with AI disabled; **every AI feature has a rule-based
+  fallback**.
+- **AnalyticsService is the sole analytics source:** `AiService` reads KPIs via `AnalyticsService.getKpis()` /
+  `executionScore()`; it never queries repositories for metrics. (Operational lists like open tasks are not
+  analytics and may be read for planning context.) See `docs/Analytics_Contract.md`.
+- **Approval model:** AI outputs are **staged** and returned for review; AI writes **no records** — acceptance
+  goes through the existing services (IdeaService/ContentService/etc.).
+- **Provider abstraction:** `AiProvider` + 4 adapters (Anthropic/OpenAI/Gemini/OpenRouter); provider-specific
+  code is isolated; models are editable defaults, not permanent (docs 19 §5). Errors normalize to `AI_*` codes;
+  retry only rate-limit/transient (max 2).
+- **Response validation:** responses are parsed + schema-checked → `AI_RESPONSE_SCHEMA_INVALID` on failure.
+- **Selling moments** drive the feature set: `analyzePerformance` ("Execution Score dropped to X% — here's
+  why"), `explainRecovery` ("recover without delaying Friday's video"), `generateWeeklyPlan` ("realistic for
+  your actual hours"). Each has a rule-based version so the moment lands even without AI.
+- **Scope:** Notifications (FR-020) + opt-in auto-sync trigger remain deferred (later increment).
+**Consequences:** AI is a value-add layer over the same KPIs the dashboard uses; no lock-in, no key exposure,
+no analytics duplication when M5 AI and the dashboard both consume AnalyticsService. Live provider calls need
+bound-project + key evidence (KNOWN_ISSUES I-07).

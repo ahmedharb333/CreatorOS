@@ -47,6 +47,7 @@ const TestRunner = (function () {
       { suite: 'Performance', cases: (typeof PerformanceTests_ === 'function') ? PerformanceTests_() : [] },
       { suite: 'Analytics', cases: (typeof AnalyticsTests_ === 'function') ? AnalyticsTests_() : [] },
       { suite: 'Dashboard', cases: (typeof DashboardTests_ === 'function') ? DashboardTests_() : [] },
+      { suite: 'AI', cases: (typeof AiTests_ === 'function') ? AiTests_() : [] },
     ];
   }
 

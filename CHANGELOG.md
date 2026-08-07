@@ -89,3 +89,24 @@ versioning with two tracked numbers: **PRODUCT_VERSION** (`MAJOR.MINOR.PATCH`) a
 - **Menu**: Run Recovery, Suggest Repurposing, Record Performance, Refresh Dashboard.
 - **Tests**: Recovery 4, Repurposing 3, Performance 3, Analytics 2, Dashboard 2, + Schema visibility (SCH-008).
   **100/100 green** (34 pure + 66 GAS-mock). Full regression of M1–M3 intact.
+
+## [Unreleased] — Milestone 5: AI Integration
+
+- **AiService** (FR-017/018/019): optional, customer-funded AI. Key in User Properties (never cells/logs).
+  Consumes analytics **only** via `AnalyticsService` (Analytics Contract). Outputs **staged for approval** —
+  AI writes no records. Every feature has a **rule-based fallback**.
+- **Provider abstraction**: `AiProvider` + `AnthropicProvider`/`OpenAIProvider`/`GeminiProvider`/
+  `OpenRouterProvider`; isolated request shapes; editable default models (not permanent); normalized `AI_*`
+  errors; retry only rate-limit/transient (max 2).
+- **AiPrompts** (versioned, docs 28) + response parse/validate → `AI_RESPONSE_SCHEMA_INVALID`.
+- **Selling-moment features**: `analyzePerformance` ("Execution Score dropped to X% — here's why"),
+  `explainRecovery` ("recover without delaying Friday's video"), `generateWeeklyPlan` ("realistic for your
+  actual hours") — each with a rule-based version.
+- **AI_LOG** usage logging (provider/model/tokens/status only — no prompt, response, or key) via `AiLogRepository`.
+- **Menu**: AI Set Up Provider (with data-transmission disclosure), Test Connection, Weekly Plan, Explain
+  Execution Score, Disable.
+- **Manifest/scope**: no new OAuth scope needed beyond existing (UrlFetchApp is implicit); Notifications
+  (FR-020) + opt-in auto-sync trigger deferred.
+- **Docs**: `Analytics_Contract.md` (KPI reference), ADR-020, REQUIREMENT_COVERAGE retitled cumulative.
+- **Tests**: AI suite (10) via stub providers + mock UrlFetchApp. **110/110 green** (34 pure + 76 GAS-mock).
+  Live-provider evidence recommended before sign-off (I-07).

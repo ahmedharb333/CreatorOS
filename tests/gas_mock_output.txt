@@ -99,10 +99,14 @@
 [INFO] PerformanceService: Performance recorded
 [INFO] DashboardService: Dashboard refreshed
 [INFO] DashboardService: Dashboard refreshed
-[INFO] TestRunner: Test run complete: 66/66 passed
+[INFO] PlanningService: Weekly plan built
+[ERROR] AiService: No AI key configured.
+[INFO] ContentService: Content created
+[INFO] RepurposingService: Rule-based suggestions created
+[INFO] TestRunner: Test run complete: 76/76 passed
 INIT: WORKBOOK_READY — CreatorOS workbook initialized.
 CreatorOS Milestone 1 tests
-66 / 66 passed, 0 failed.
+76 / 76 passed, 0 failed.
 
 All green.
 
@@ -110,7 +114,7 @@ All green.
 
 ## Executed run
 
-66 / 66 passed, 0 failed.
+76 / 76 passed, 0 failed.
 
 | Suite | Case | Result | Detail |
 |---|---|---|---|
@@ -180,4 +184,14 @@ All green.
 | Analytics | AN-002 getKpis returns the full metric set | PASS |  |
 | Dashboard | DASH-001 refresh renders DASHBOARD with an Execution Score row | PASS |  |
 | Dashboard | DASH-002 refresh is non-destructive to source and safe when empty-ish | PASS |  |
+| AI | AI-001 disabled → weekly plan falls back to rule-based | PASS |  |
+| AI | AI-002 no key → testProvider returns AI_KEY_NOT_CONFIGURED | PASS |  |
+| AI | AI-003 HTTP status → normalized AI_* codes | PASS |  |
+| AI | AI-004 enabled + valid JSON → staged plan, NO records written (approval model) | PASS |  |
+| AI | AI-005 malformed JSON → AI_RESPONSE_SCHEMA_INVALID | PASS |  |
+| AI | AI-006 provider auth error normalized through to the result | PASS |  |
+| AI | AI-007 disabled performance analysis uses AnalyticsService (Execution Score) | PASS |  |
+| AI | AI-008 API key never appears in AI_LOG | PASS |  |
+| AI | AI-009 Anthropic adapter parses a provider response | PASS |  |
+| AI | AI-010 disabled repurposing falls back to rule-based mappings | PASS |  |
 

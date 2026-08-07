@@ -17,20 +17,23 @@ protections, Script/User properties, LockService. It is not the real Google engi
 remains the final acceptance surface — but the previously-pending suites are now **executed with real
 pass/fail**, not merely authored.
 
-## Summary (Milestones 1 + 2 + 3 + 4)
+## Summary (Milestones 1 + 2 + 3 + 4 + 5)
 
 | Metric | Count |
 |---|---:|
-| **Total test cases** | **100** |
-| **Passed** | **100** |
+| **Total test cases** | **110** |
+| **Passed** | **110** |
 | **Failed** | **0** |
 | **Skipped** | **0** |
-| Static analysis (`node --check`) | 44 / 44 files OK |
+| Static analysis (`node --check`) | 53 / 53 files OK |
 
 - Pure-logic: **34 / 34 passed** (`tests/pure_test_output.txt`).
-- GAS suites via mock: **66 / 66 passed** — Schema 8, IdService 5, Validation 6, Repository 6, **Domain 12**,
+- GAS suites via mock: **76 / 76 passed** — Schema 8, IdService 5, Validation 6, Repository 6, **Domain 12**,
   **Planning 5**, **Calendar 10**, **Recovery 4**, **Repurposing 3**, **Performance 3**, **Analytics 2**,
-  **Dashboard 2**.
+  **Dashboard 2**, **AI 10** (disabled-fallback, key-not-configured, HTTP→AI_* normalization, approval model /
+  no records written, schema-invalid, auth error, AnalyticsService-sourced analysis, key-never-in-AI_LOG,
+  Anthropic adapter parse, rule-based repurposing fallback).
+- **M5 AI:** live-provider calls are not exercised by the mock (stub providers + mock UrlFetchApp) — see I-07.
 - M4 highlights: Execution Score (AN-001), recovery marks calendar `Changed` not auto-push (REC-002),
   DEFER_CONTENT shifts dates (REC-003), rule-based repurposing + accept (RPS-001/002), performance validation
   (PERF-001/002), decision-oriented dashboard render (DASH-001), sheet visibility metadata (SCH-008).
@@ -38,7 +41,7 @@ pass/fail**, not merely authored.
 - **Milestone 3 approval additionally requires bound-project (real Google Calendar) integration evidence** —
   `docs/Calendar_Integration_Test_Plan.md` (I-06). M4 adds no new external API.
 
-## 1. GAS suites via mock — EXECUTED ✅ (66/66)
+## 1. GAS suites via mock — EXECUTED ✅ (76/76)
 
 Runner: `node tests/node/run_gas_suites.js`. Workbook is built + workflows seeded in the mock, then the
 same `TestRunner` suites execute. Captured output: `tests/gas_mock_output.txt`.

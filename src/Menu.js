@@ -32,6 +32,12 @@ function buildMenu_() {
     .addItem('Record Performance', 'menuRecordPerformance')
     .addItem('Refresh Dashboard', 'menuRefreshDashboard')
     .addSeparator()
+    .addItem('AI: Set Up Provider', 'menuAiSetup')
+    .addItem('AI: Test Connection', 'menuAiTest')
+    .addItem('AI: Weekly Plan', 'menuAiWeeklyPlan')
+    .addItem('AI: Explain Execution Score', 'menuAiExplainScore')
+    .addItem('AI: Disable', 'menuAiDisable')
+    .addSeparator()
     .addItem('Run Tests', 'menuRunTests')
     .addSeparator()
     .addItem('About CreatorOS', 'menuAbout')
@@ -156,6 +162,54 @@ function menuRefreshDashboard() {
   toast_(result.message, 'CreatorOS');
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEETS.DASHBOARD);
   if (sheet) SpreadsheetApp.setActiveSheet(sheet);
+}
+
+/**
+ * Menu: set up the optional, customer-funded AI provider. The API key is entered in a
+ * dialog and stored in User Properties — never in a cell (docs 29). Sending data to the
+ * chosen provider incurs the customer's own charges.
+ */
+function menuAiSetup() {
+  const ui = SpreadsheetApp.getUi();
+  const disc = ui.alert('Enable AI (optional)',
+    'CreatorOS will send selected creator data (KPIs, tasks, content) to the AI provider you choose to generate recommendations. Your API account will be charged per that provider\'s terms. CreatorOS does not store your API key centrally. Continue?',
+    ui.ButtonSet.OK_CANCEL);
+  if (disc !== ui.Button.OK) return;
+  const p = ui.prompt('AI Provider', 'Provider (Anthropic, OpenAI, Gemini, or OpenRouter):', ui.ButtonSet.OK_CANCEL);
+  if (p.getSelectedButton() !== ui.Button.OK) return;
+  const k = ui.prompt('AI API Key', 'Paste your API key (stored securely, never shown in the sheet):', ui.ButtonSet.OK_CANCEL);
+  if (k.getSelectedButton() !== ui.Button.OK) return;
+  const m = ui.prompt('AI Model (optional)', 'Custom model id, or leave blank for the default:', ui.ButtonSet.OK_CANCEL);
+  const setRes = AiService.setProvider(p.getResponseText().trim(), k.getResponseText().trim(), m.getResponseText().trim());
+  if (!setRes.success) { ui.alert('CreatorOS', setRes.message, ui.ButtonSet.OK); return; }
+  const test = AiService.testProvider();
+  ui.alert('CreatorOS', test.message, ui.ButtonSet.OK);
+}
+
+/** Menu: test the AI connection. */
+function menuAiTest() {
+  const r = AiService.testProvider();
+  SpreadsheetApp.getUi().alert('CreatorOS', r.message, SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/** Menu: AI weekly plan (falls back to rule-based when AI is off). */
+function menuAiWeeklyPlan() {
+  const r = AiService.generateWeeklyPlan();
+  const summary = r.data && r.data.plan ? (r.data.plan.summary || r.data.note || '') : '';
+  SpreadsheetApp.getUi().alert('Weekly Plan (' + (r.data ? r.data.source : '') + ')', (r.message + '\n\n' + summary).trim(), SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/** Menu: "Your Execution Score is X% — here's why." */
+function menuAiExplainScore() {
+  const r = AiService.analyzePerformance();
+  const a = r.data && r.data.analysis ? r.data.analysis : {};
+  const body = [a.headline || '', ''].concat(a.observations || []).concat(['', 'Recommendations:']).concat(a.recommendations || []).join('\n');
+  SpreadsheetApp.getUi().alert('Execution Score — why', body, SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/** Menu: disable AI (core features continue rule-based). */
+function menuAiDisable() {
+  toast_(AiService.disableAi().message, 'CreatorOS');
 }
 
 /** Menu: load the default workflow library. */

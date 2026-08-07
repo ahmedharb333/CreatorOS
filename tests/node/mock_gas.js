@@ -271,6 +271,10 @@ globalThis.LockService = { getScriptLock: function () { return { tryLock: functi
 globalThis.Utilities = { formatDate: formatDate, sleep: function () {}, getUuid: function () { return 'mock-uuid-' + Math.random().toString(36).slice(2); } };
 globalThis.Session = { getScriptTimeZone: function () { return 'Etc/GMT'; } };
 
+// UrlFetchApp mock — default returns 200 '{}'. Tests reassign UrlFetchApp.fetch and use __mockHttp().
+globalThis.__mockHttp = function (code, text) { return { getResponseCode: function () { return code; }, getContentText: function () { return text; } }; };
+globalThis.UrlFetchApp = { fetch: function () { return globalThis.__mockHttp(200, '{}'); } };
+
 module.exports = {
   spreadsheet: _ss,
   registerCalendar: function (id, name) { _calendars[id] = new MockCalendar(id, name); return _calendars[id]; },

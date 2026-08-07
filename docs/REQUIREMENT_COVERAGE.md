@@ -64,21 +64,30 @@ Bound-project procedure + results template: `docs/Calendar_Integration_Test_Plan
 | FR-016 | Dashboard (decision-oriented) + KPI layer + **Execution Score** | `AnalyticsService`, `DashboardService` | AN-001/002, DASH-001/002 | **Passed** |
 | — | Sheet visibility metadata (ADR-019 / D4-5) | `Constants.SCHEMA[*].visibility` | SCH-008 | **Passed** |
 
+## Milestone 5 — AI Integration (Passed via mock; live-provider evidence recommended, I-07)
+
+| Req | Requirement | Implementation | Test(s) | Status |
+|---|---|---|---|---|
+| FR-017 | AI provider setup (optional, customer-funded; connection test; key in User Properties) | `AiService.setProvider/testProvider`, `AiProvider` + 4 adapters | AI-002, AI-003, AI-009 | **Passed (mock)** |
+| FR-018 | AI request management (structured prompts; validation; approval; usage logged; no key in logs) | `AiService.callJson/validate/logAi`, `AiPrompts`, `AiLogRepository` | AI-004, AI-005, AI-006, AI-008 | **Passed (mock)** |
+| FR-019 | AI suggestions (weekly plan/ideas/repurposing/performance) with rule-based fallback | `AiService.generateWeeklyPlan/generateIdeas/generateRepurposing/analyzePerformance/explainRecovery` | AI-001, AI-004, AI-007, AI-010 | **Passed (mock)** |
+| — | AI consumes analytics via AnalyticsService only (Analytics Contract) | `AiService.creatorContext` → `AnalyticsService.getKpis()` | AI-007 | **Passed** |
+| — | Selling moments (score-drop / recover-without-delay / realistic-plan) | `analyzePerformance`/`explainRecovery`/`generateWeeklyPlan` | AI-004/007 | **Passed** |
+
 ## Requirements owned by later milestones (Not Started, by instruction)
 
 | Req | Requirement | Milestone |
 |---|---|---|
-| FR-017 / FR-018 / FR-019 | AI setup / request mgmt / weekly suggestions | M5 |
-| FR-020 | Notifications | M5 |
+| FR-020 | Notifications (email reminders + opt-in auto-sync trigger) | later (M5b/M6) |
 | NFR-001 / NFR-002 | Performance limits / partial-failure handling | M3–M4 |
 | NFR-004 | Non-technical usability (UI) | M2+ |
 | NFR-007 | Localization readiness | M2 |
 
 ## Sign-off snapshot
 
-- M1–M4 scope (foundational, core domain, calendar, recovery & analytics): **implemented and executed green via mock.**
-- Executed tests: **34/34 pure-logic**, **66/66 GAS suites via mock**, **44/44 `node --check`** = **100/100**, 0 failed.
-- **M3 approval additionally requires bound-project integration evidence** (`Calendar_Integration_Test_Plan.md`, I-06). M4 introduces no new external API → no new bound-project gate.
+- M1–M5 scope (foundational, core domain, calendar, recovery & analytics, AI): **implemented and executed green via mock.**
+- Executed tests: **34/34 pure-logic**, **76/76 GAS suites via mock**, **53/53 `node --check`** = **110/110**, 0 failed.
+- **M3 approval requires bound-project Calendar evidence** (I-06); **M5 benefits from live-provider AI evidence** (I-07). Both mock-green today.
 - On-Google run recommended as final confirmation (I-01, downgraded).
 - Unresolved Critical defects: **0.** Unresolved High defects: **0.**
 - Recommendation: **Milestone 1 approved with corrections applied**; proceed to Milestone 2.

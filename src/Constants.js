@@ -130,9 +130,21 @@ const USER_PROP = Object.freeze({
   AI_PROVIDER: 'AI_PROVIDER',
   AI_MODEL: 'AI_MODEL',
   AI_API_KEY: 'CREATOROS_AI_API_KEY',
+  AI_ENABLED: 'AI_ENABLED',
   CALENDAR_ID: 'CALENDAR_ID',
   REMINDER_ENABLED: 'REMINDER_ENABLED',
   DEFAULT_REMINDER_MINUTES: 'DEFAULT_REMINDER_MINUTES',
+});
+
+/**
+ * Editable default model per provider (docs 19 §5 — NOT permanent; the customer may set a
+ * custom model in Setup, and these should be updated as providers evolve).
+ */
+const AI_DEFAULT_MODELS = Object.freeze({
+  Anthropic: 'claude-sonnet-4-5',
+  OpenAI: 'gpt-4o-mini',
+  Gemini: 'gemini-1.5-flash',
+  OpenRouter: 'openai/gpt-4o-mini',
 });
 
 /** Standard metadata columns present on operational tables (docs 16 §1). */

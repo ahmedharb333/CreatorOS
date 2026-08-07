@@ -24,17 +24,20 @@ const srcFiles = [
   'repositories/BaseRepository.js', 'repositories/IdeaRepository.js', 'repositories/ContentRepository.js',
   'repositories/TaskRepository.js', 'repositories/WorkflowRepository.js', 'repositories/PerformanceRepository.js',
   'repositories/RepurposingRepository.js', 'repositories/WeeklyPlanRepository.js', 'repositories/SettingsRepository.js',
-  'repositories/RecoveryLogRepository.js',
+  'repositories/RecoveryLogRepository.js', 'repositories/AiLogRepository.js',
+  'AiPrompts.js',
+  'providers/AiProvider.js', 'providers/AnthropicProvider.js', 'providers/OpenAIProvider.js',
+  'providers/GeminiProvider.js', 'providers/OpenRouterProvider.js',
   'services/SetupService.js', 'services/IdeaService.js', 'services/ContentService.js',
   'services/WorkflowService.js', 'services/TaskService.js', 'services/CapacityService.js', 'services/PlanningService.js',
   'services/CalendarService.js', 'services/AnalyticsService.js', 'services/PerformanceService.js',
-  'services/RepurposingService.js', 'services/DashboardService.js', 'services/RecoveryService.js',
+  'services/RepurposingService.js', 'services/DashboardService.js', 'services/RecoveryService.js', 'services/AiService.js',
   'WorkbookService.js', 'WorkflowSeed.js', 'Menu.js', 'Main.js',
 ].map(function (f) { return path.join(SRC, f); });
 
 const testFiles = [
   'TestRunner.js', 'SchemaTests.js', 'IdTests.js', 'ValidationTests.js', 'RepositoryTests.js', 'DomainTests.js',
-  'PlanningTests.js', 'CalendarTests.js', 'RecoveryTests.js', 'AnalyticsTests.js',
+  'PlanningTests.js', 'CalendarTests.js', 'RecoveryTests.js', 'AnalyticsTests.js', 'AiTests.js',
 ].map(function (f) { return path.join(TESTS, f); });
 
 let code = '';
