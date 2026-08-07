@@ -1,15 +1,15 @@
-# Only push Apps Script source, HTML dialogs, GAS test suites, and the manifest.
-**/**
-!appsscript.json
-!src/**/*.js
-!src/**/*.html
-!tests/**/*.js
-
-# Node-only test harness (require/fs/vm) must NOT be pushed to Apps Script.
-tests/node/**
-
-# Never push docs, registers, release notes, or sample data to Apps Script.
+# Files NOT pushed to Apps Script (ignore-list style for clasp v3).
+# The Apps Script project must contain ONLY: appsscript.json + src/**/*.js + src/**/*.html
+# + the GAS test suites (tests/*.js). The Node-only harness (require/vm) must be excluded or it
+# breaks Apps Script compilation.
+.git/**
+node_modules/**
 docs/**
 release/**
 sample-data/**
-*.md
+tests/node/**
+**/*.md
+package.json
+.gitignore
+.claspignore
+.clasp.json.standalone-bak
