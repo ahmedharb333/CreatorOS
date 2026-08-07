@@ -1,0 +1,37 @@
+{
+  "product": "CreatorOS",
+  "productVersion": "1.0.0",
+  "schemaVersion": 1,
+  "milestone": 2,
+  "milestoneName": "Core Domain",
+  "buildDate": "2026-08-07",
+  "status": "code-complete; awaiting Product Architect / QA approval (Calendar/M3 not started)",
+  "stack": {
+    "runtime": "Google Apps Script (V8)",
+    "systemOfRecord": "Google Sheets",
+    "deployment": "clasp",
+    "aiPolicy": "optional, customer-funded (not implemented until M5)"
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui"
+  ],
+  "services": [
+    "SetupService", "IdeaService", "ContentService", "WorkflowService",
+    "TaskService", "CapacityService", "PlanningService"
+  ],
+  "requirementsCovered": ["FR-001", "FR-003", "FR-004", "FR-005", "FR-006", "FR-007", "FR-008"],
+  "schemaChanges": [
+    "TASKS.Dependency_Task_IDs (JSON array, authoritative dependency graph)",
+    "CONTENT.Paused_From_Status (persisted resume target)"
+  ],
+  "adrsAdded": ["ADR-014", "ADR-015", "ADR-016", "ADR-017"],
+  "tests": {
+    "pureLogic": { "total": 34, "passed": 34, "failed": 0 },
+    "gasSuitesViaMock": { "total": 41, "passed": 41, "failed": 0, "suites": { "Schema": 7, "IdService": 5, "Validation": 6, "Repository": 6, "Domain": 12, "Planning": 5 } },
+    "staticAnalysis": { "checked": 34, "ok": 34, "tool": "node --check" },
+    "totalExecuted": 75, "totalPassed": 75, "totalFailed": 0,
+    "onGoogle": { "status": "recommended-final-confirmation", "issue": "I-01" }
+  },
+  "gate": "STOP after Milestone 2. Do not begin Milestone 3 (Calendar) until QA approval."
+}

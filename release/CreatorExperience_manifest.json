@@ -1,0 +1,39 @@
+{
+  "product": "CreatorOS",
+  "productVersion": "1.0.0",
+  "schemaVersion": 1,
+  "milestone": "Creator Experience",
+  "buildDate": "2026-08-07",
+  "status": "code-complete; 119/119 mock green; bound-project UX walkthrough recommended (I-08)",
+  "stack": { "runtime": "Google Apps Script (V8)", "systemOfRecord": "Google Sheets", "deployment": "clasp" },
+  "sheetCount": 17,
+  "backendImpact": "UX-only — no schema changes, no new external APIs",
+  "creatorMode": {
+    "default": "Creator Mode",
+    "visibleSheets": ["HOME", "TODAY", "IDEAS", "CONTENT", "DASHBOARD"],
+    "drivenBy": "SCHEMA[*].visibility metadata (no hardcoded names)",
+    "advancedWorkspaceToggle": true
+  },
+  "flagship": {
+    "feature": "loadSampleWorkspace()",
+    "goal": "new customer understands CreatorOS in five minutes without entering data",
+    "includes": ["fictional creator", "realistic schedule", "published + in-production content", "completed + upcoming tasks", "recovery example (overdue)", "approved auto-allocated plan (calendar-ready)", "performance data", "repurposing suggestions", "populated dashboard", "AI recommendations available"]
+  },
+  "heroMetric": "Execution Score",
+  "dialogs": ["AddIdea", "CreateContent", "AiReview"],
+  "newFiles": {
+    "services": ["WorkspaceService", "HomeService", "OnboardingService", "SuccessService", "SampleDataService"],
+    "ui": ["UiService.js", "AddIdea.html", "CreateContent.html", "AiReview.html"],
+    "library": ["EmptyStates.js"],
+    "docs": ["FIRST_5_MINUTES.md", "ADR-021"]
+  },
+  "tests": {
+    "pureLogic": { "total": 34, "passed": 34, "failed": 0 },
+    "gasSuitesViaMock": { "total": 85, "passed": 85, "failed": 0, "creatorExperienceSuite": 9 },
+    "staticAnalysis": { "checkedJs": 61, "ok": 61 },
+    "totalExecuted": 119, "totalPassed": 119, "totalFailed": 0
+  },
+  "outstanding": { "I-08": "bound-project UX walkthrough (HTML dialog rendering + felt 5-minute flow)" },
+  "benchmark": "docs/FIRST_5_MINUTES.md",
+  "gate": "STOP after the Creator Experience milestone for UX review. No further feature development until complete."
+}

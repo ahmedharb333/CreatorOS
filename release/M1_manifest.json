@@ -1,0 +1,48 @@
+{
+  "product": "CreatorOS",
+  "productVersion": "1.0.0",
+  "schemaVersion": 1,
+  "milestone": 1,
+  "milestoneName": "Workbook & Repositories",
+  "buildDate": "2026-08-06",
+  "status": "Milestone 1 approved; post-approval corrections applied",
+  "stack": {
+    "runtime": "Google Apps Script (V8)",
+    "systemOfRecord": "Google Sheets",
+    "deployment": "clasp",
+    "aiPolicy": "optional, customer-funded (Anthropic/OpenAI/Gemini/OpenRouter)"
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui"
+  ],
+  "counts": {
+    "sheets": 16,
+    "sourceFiles": 19,
+    "testFiles": 6,
+    "defaultWorkflows": 8,
+    "workflowSteps": 74
+  },
+  "sheets": [
+    "HOME", "SETUP", "IDEAS", "CONTENT", "TASKS", "WORKFLOWS", "WEEKLY_PLAN", "TODAY",
+    "CALENDAR", "REPURPOSING", "PERFORMANCE", "DASHBOARD", "AI_LOG", "SYSTEM_LOG", "CONFIG", "CHANGELOG"
+  ],
+  "idPrefixes": {
+    "creator": "CRT", "idea": "IDE", "content": "CNT", "task": "TSK", "workflow": "WKF",
+    "workflowStep": "WFS", "week": "WEK", "repurpose": "RPS", "repurposeGroup": "RPG",
+    "performance": "PER", "aiRequest": "AIR", "log": "LOG", "correlation": "COR"
+  },
+  "tests": {
+    "pureLogic": { "total": 34, "passed": 34, "failed": 0, "surface": "node" },
+    "gasSuitesViaMock": { "total": 24, "passed": 24, "failed": 0, "surface": "node-apps-script-mock" },
+    "staticAnalysis": { "checked": 27, "ok": 27, "tool": "node --check" },
+    "onGoogle": { "status": "recommended-final-confirmation", "surface": "apps-script", "issue": "I-01" },
+    "totalExecuted": 58, "totalPassed": 58, "totalFailed": 0
+  },
+  "artifacts": {
+    "workbook": "generated at runtime by 'Initialize / Repair Workbook' (see WORKBOOK_ARTIFACT.md)",
+    "qaPackage": "release/M1_QA_Package.md",
+    "manifest": "release/appsscript.json"
+  },
+  "gate": "Milestone 1 approved with corrections. Proceeding to Milestone 2."
+}

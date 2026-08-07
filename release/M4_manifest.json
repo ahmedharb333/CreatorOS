@@ -1,0 +1,30 @@
+{
+  "product": "CreatorOS",
+  "productVersion": "1.0.0",
+  "schemaVersion": 1,
+  "milestone": 4,
+  "milestoneName": "Recovery & Analytics",
+  "buildDate": "2026-08-07",
+  "status": "code-complete; 100/100 mock green; awaiting QA approval",
+  "stack": { "runtime": "Google Apps Script (V8)", "systemOfRecord": "Google Sheets", "deployment": "clasp" },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/calendar"
+  ],
+  "sheetCount": 17,
+  "servicesAdded": ["RecoveryService", "RepurposingService", "PerformanceService", "AnalyticsService", "DashboardService"],
+  "requirementsCovered": ["FR-012", "FR-013", "FR-014", "FR-015", "FR-016"],
+  "flagshipMetric": { "name": "Execution Score", "formula": "completed-on-time / planned-tasks-due (%)", "version": 1 },
+  "adrsAdded": ["ADR-019 (Hide the Complexity: Creator Mode vs Advanced Workspace; visibility metadata)"],
+  "schemaChanges": ["RECOVERY_LOG system sheet", "visibility: creator|system metadata on every sheet (code, not a column)"],
+  "creatorSheets": ["HOME", "TODAY", "IDEAS", "CONTENT", "DASHBOARD"],
+  "tests": {
+    "pureLogic": { "total": 34, "passed": 34, "failed": 0 },
+    "gasSuitesViaMock": { "total": 66, "passed": 66, "failed": 0, "suites": { "Schema": 8, "IdService": 5, "Validation": 6, "Repository": 6, "Domain": 12, "Planning": 5, "Calendar": 10, "Recovery": 4, "Repurposing": 3, "Performance": 3, "Analytics": 2, "Dashboard": 2 } },
+    "staticAnalysis": { "checked": 44, "ok": 44 },
+    "totalExecuted": 100, "totalPassed": 100, "totalFailed": 0
+  },
+  "outstanding": { "I-06": "M3 bound-project Calendar integration evidence (no new external API in M4)" },
+  "gate": "STOP after Milestone 4. Do not begin Milestone 5 (AI/Notifications) until QA approval."
+}

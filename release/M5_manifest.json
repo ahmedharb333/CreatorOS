@@ -1,0 +1,44 @@
+{
+  "product": "CreatorOS",
+  "productVersion": "1.0.0",
+  "schemaVersion": 1,
+  "milestone": 5,
+  "milestoneName": "AI Integration",
+  "buildDate": "2026-08-07",
+  "status": "code-complete; 110/110 mock green; live-provider AI evidence recommended (I-07)",
+  "stack": { "runtime": "Google Apps Script (V8)", "systemOfRecord": "Google Sheets", "deployment": "clasp" },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/calendar"
+  ],
+  "sheetCount": 17,
+  "ai": {
+    "optional": true,
+    "customerFunded": true,
+    "keyStorage": "User Properties (never cells/logs)",
+    "analyticsSource": "AnalyticsService only (Analytics Contract)",
+    "approvalModel": "AI outputs staged; AI writes no records",
+    "providers": ["Anthropic", "OpenAI", "Gemini", "OpenRouter"],
+    "ruleBasedFallback": true,
+    "sellingMoments": [
+      "analyzePerformance: Execution Score dropped to X% — here's why",
+      "explainRecovery: recover without delaying Friday's video",
+      "generateWeeklyPlan: realistic for your actual hours"
+    ]
+  },
+  "requirementsCovered": ["FR-017", "FR-018", "FR-019"],
+  "adrsAdded": ["ADR-020 (AI Integration)"],
+  "tests": {
+    "pureLogic": { "total": 34, "passed": 34, "failed": 0 },
+    "gasSuitesViaMock": { "total": 76, "passed": 76, "failed": 0, "aiSuite": 10 },
+    "staticAnalysis": { "checked": 53, "ok": 53 },
+    "totalExecuted": 110, "totalPassed": 110, "totalFailed": 0
+  },
+  "outstanding": {
+    "I-07": "live-provider AI evidence (real key + network per provider)",
+    "I-06": "M3 bound-project Calendar evidence"
+  },
+  "deferred": ["FR-020 Notifications", "opt-in auto-sync trigger", "AI review dialog", "Creator Mode hiding (metadata ready)"],
+  "gate": "STOP after Milestone 5 for QA review."
+}

@@ -1,0 +1,29 @@
+{
+  "product": "CreatorOS",
+  "productVersion": "1.0.0",
+  "schemaVersion": 1,
+  "milestone": 3,
+  "milestoneName": "Calendar Integration",
+  "buildDate": "2026-08-07",
+  "status": "code-complete; mock green; bound-project Calendar evidence required before approval",
+  "stack": { "runtime": "Google Apps Script (V8)", "systemOfRecord": "Google Sheets", "deployment": "clasp" },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/calendar"
+  ],
+  "servicesAdded": ["CalendarService"],
+  "requirementsCovered": ["FR-009", "FR-010", "FR-011"],
+  "contract": "docs/Calendar_Event_Contract.md (approved: O-1 task-source-of-truth, O-2 ±1d window, O-3 defer milestones, O-4 no auto-sync)",
+  "adrsAdded": ["ADR-018"],
+  "deviationsAdded": ["D-05 (calendar scope declared in manifest)"],
+  "tests": {
+    "pureLogic": { "total": 34, "passed": 34, "failed": 0 },
+    "gasSuitesViaMock": { "total": 51, "passed": 51, "failed": 0, "suites": { "Schema": 7, "IdService": 5, "Validation": 6, "Repository": 6, "Domain": 12, "Planning": 5, "Calendar": 10 } },
+    "staticAnalysis": { "checked": 36, "ok": 36 },
+    "totalExecuted": 85, "totalPassed": 85, "totalFailed": 0,
+    "boundProjectIntegration": { "status": "REQUIRED-BEFORE-APPROVAL", "plan": "docs/Calendar_Integration_Test_Plan.md", "issue": "I-06" }
+  },
+  "commercialRoadmap": { "editions": ["Basic", "Pro", "Team"], "freeTier": false, "tierGatingImplemented": false },
+  "gate": "STOP after Milestone 3. Approval requires the bound-project Calendar integration evidence (I-06)."
+}
