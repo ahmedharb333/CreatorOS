@@ -135,14 +135,19 @@ const SampleDataService = (function () {
     repo.setValue('ONBOARDING_STATUS', 'Not started');
   }
 
-  /** @private delete data rows from transactional sheets (keeps WORKFLOWS/CONFIG/SETUP/CHANGELOG). */
+  /** @private clear data rows from transactional sheets (keeps WORKFLOWS/CONFIG/SETUP/CHANGELOG). */
   function clearData() {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     DATA_SHEETS.forEach(function (name) {
       const sheet = ss.getSheetByName(name);
       if (!sheet) return;
       const last = sheet.getLastRow();
-      for (let r = last; r >= 2; r--) sheet.deleteRow(r);
+      if (last < 2) return; // header only / empty
+      // Real Sheets forbids deleting ALL non-frozen rows ("Sorry, it is not possible to delete
+      // all non-frozen rows on a sheet"), which fired here whenever a data sheet was non-empty.
+      // Clearing contents is always safe, keeps validations/formatting, and leaves the empty rows
+      // for the next seed to overwrite (getLastRow drops back to the header row).
+      sheet.getRange(2, 1, last - 1, sheet.getLastColumn()).clearContent();
     });
   }
 

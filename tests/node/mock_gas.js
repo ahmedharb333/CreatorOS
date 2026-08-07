@@ -53,6 +53,11 @@ class MockRange {
     return this;
   }
   setValue(v) { this.sheet._set(this.row, this.col, v, null); return this; }
+  clearContent() {
+    for (let r = 0; r < this.numRows; r++)
+      for (let c = 0; c < this.numCols; c++) this.sheet._set(this.row + r, this.col + c, '', null);
+    return this;
+  }
   setFormula(f) { this.sheet._set(this.row, this.col, '', f); return this; }
   setDataValidation() { return this; }
   setDataValidations() { return this; }
