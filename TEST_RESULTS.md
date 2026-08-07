@@ -110,24 +110,39 @@ are validated by rendering on a bound project, I-08.)
 - Multi-dependency workflow step (`Dependency_Sequences = "7,8"`) seeded and parsed (see WorkflowSeed).
 - Idempotent init: re-running does not duplicate seed rows (build guards; exercised by mock init + verify).
 
-## 5. On-Google confirmation (recommended)
+## 5. On-Google confirmation — EXECUTED ✅ (76/76)
 
-Run **CreatorOS ▸ Run Tests** on a bound project after `clasp push` and paste the summary below. This is a
-final confirmation on the real Sheets engine; the logic is already executed green via the mock.
+Ran **CreatorOS ▸ Run Tests** on the bound "CreatorOS Beta Master" project (2026-08-07) after `clasp push`.
 
 ```
-(paste on-Google run here)
+CreatorOS Milestone 1 tests
+76 / 76 passed, 0 failed.
+
+All green.
 ```
+
+Count note: on a real bound project the total is **76** (not 85). The 10 Calendar cases collapse to a
+single guarded skip — they exercise an in-memory test calendar that only exists in the Node mock, and Run
+Tests deliberately never mutates a creator's real calendar — and AI-009 self-skips without the harness HTTP
+hook. All other suites run for real against live Sheets.
+
+Two real, mock-invisible bugs were found and fixed by this first on-Google run and are covered above:
+- **SETUP repair** — `WorkbookService.seedSetup()` now self-heals missing required SETTING rows on
+  Initialize/Repair; `SetupService.saveSettings()` now hard-fails (not partial-success) when a required key
+  cannot be persisted. (surfaced by SETUP-002)
+- **Sample workspace** — `SampleDataService.clearData()` no longer deletes all non-frozen rows (a forbidden
+  op on real Sheets that crashed "Try Sample Workspace" with an INTERNAL error); it clears row contents
+  instead. (surfaced by CX-SAMPLE-001)
 
 ## 6. Acceptance-exit status (docs 21 §14)
 
 | Criterion | Target | Current |
 |---|---|---|
-| Critical tests pass | 100% | 100% (mock + pure) |
+| Critical tests pass | 100% | 100% (mock + pure + on-Google) |
 | No critical defect | required | met (0) |
 | No API key exposure | required | met (design + sanitize verified) |
-| No duplicate calendar events | required | N/A this milestone (calendar in M3) |
+| No duplicate calendar events | required | met (CAL-002/003 via mock; on-Google calendar guarded) |
 
-**Current product: 119/119 executed green** (34 pure + 85 GAS-mock). Full per-case output in
-`tests/gas_mock_output.txt`. On-Google run + the visual/live confirmations (I-06/I-07/I-08) recommended as
-final acceptance surfaces.
+**Current product: 119/119 executed green** (34 pure + 85 GAS-mock) **plus 76/76 on-Google** on the bound
+Beta Master project. Full per-case mock output in `tests/gas_mock_output.txt`. On-Google run **completed**
+(I-01 closed); the visual/live confirmations (I-06/I-07/I-08) remain as optional acceptance surfaces.
