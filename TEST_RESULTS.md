@@ -1,7 +1,8 @@
-# CreatorOS — Test Results
+# CreatorOS — Test Results (cumulative, through Milestone 5)
 
-- Product `1.0.0` · Schema `1` · Milestone 1 (post-approval corrections applied)
-- Run date: 2026-08-06
+- Product `1.0.0` · Schema `1` · Cumulative across Milestones 1–5 (foundational, core domain, calendar,
+  recovery & analytics, AI). Re-run any time with `node tests/node/run_gas_suites.js` + `node tests/node/pure_tests.js`.
+- Last updated: 2026-08-07
 
 ## Execution surfaces
 
